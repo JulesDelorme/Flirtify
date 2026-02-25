@@ -3,6 +3,7 @@ import SwiftUI
 private let matchesRelativeTimeFormatter: RelativeDateTimeFormatter = {
     let formatter = RelativeDateTimeFormatter()
     formatter.unitsStyle = .short
+    formatter.locale = Locale(identifier: "fr_FR")
     return formatter
 }()
 
@@ -30,8 +31,8 @@ struct MatchesView<Destination: View>: View {
 
                         if viewModel.items.isEmpty {
                             EmptyStateView(
-                                title: "No matches yet",
-                                subtitle: "Swipe right on people that already liked you.",
+                                title: "Aucun match pour l'instant",
+                                subtitle: "Glisse a droite sur les profils qui t'ont deja aime.",
                                 symbol: "bubble.left.and.bubble.right"
                             )
                             .padding(.top, 30)
@@ -43,7 +44,7 @@ struct MatchesView<Destination: View>: View {
                     .padding(20)
                 }
             }
-            .navigationTitle("Matches")
+            .navigationTitle("Matchs")
             .navigationBarTitleDisplayMode(.inline)
         }
         .onAppear {
@@ -54,10 +55,10 @@ struct MatchesView<Destination: View>: View {
     private var topSummaryCard: some View {
         HStack(spacing: 14) {
             VStack(alignment: .leading, spacing: 6) {
-                Text("Your inbox")
+                Text("Ta messagerie")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.secondary)
-                Text("\(viewModel.items.count) active match\(viewModel.items.count > 1 ? "es" : "")")
+                Text("\(viewModel.items.count) match actif\(viewModel.items.count > 1 ? "s" : "")")
                     .font(.title3.weight(.bold))
             }
 
@@ -77,7 +78,7 @@ struct MatchesView<Destination: View>: View {
 
     private var newMatchesSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("New matches")
+            Text("Nouveaux matchs")
                 .font(.headline)
 
             ScrollView(.horizontal, showsIndicators: false) {
@@ -85,21 +86,14 @@ struct MatchesView<Destination: View>: View {
                     ForEach(Array(viewModel.items.prefix(10))) { item in
                         NavigationLink(destination: destinationBuilder(item.match, item.otherUser)) {
                             VStack(spacing: 8) {
-                                ZStack {
-                                    Circle()
-                                        .fill(
-                                            LinearGradient(
-                                                colors: [Color.pink.opacity(0.4), Color.blue.opacity(0.45)],
-                                                startPoint: .topLeading,
-                                                endPoint: .bottomTrailing
-                                            )
-                                        )
-                                        .frame(width: 64, height: 64)
-
-                                    Image(systemName: item.otherUser.photoSymbol)
-                                        .font(.system(size: 28, weight: .semibold))
-                                        .foregroundStyle(.white)
-                                }
+                                ProfilePhotoView(
+                                    photoData: item.otherUser.primaryPhotoData,
+                                    fallbackSymbol: item.otherUser.photoSymbol,
+                                    size: 64,
+                                    backgroundColor: Color.pink.opacity(0.25),
+                                    symbolColor: .white,
+                                    strokeColor: Color.white.opacity(0.85)
+                                )
 
                                 Text(item.otherUser.firstName)
                                     .font(.caption.weight(.semibold))
@@ -125,41 +119,46 @@ struct MatchesView<Destination: View>: View {
                 ForEach(viewModel.items) { item in
                     NavigationLink(destination: destinationBuilder(item.match, item.otherUser)) {
                         HStack(spacing: 12) {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                    .fill(Color.blue.opacity(0.14))
-                                    .frame(width: 56, height: 56)
-
-                                Image(systemName: item.otherUser.photoSymbol)
-                                    .font(.system(size: 24, weight: .medium))
-                                    .foregroundStyle(.blue)
-                            }
+                            ProfilePhotoView(
+                                photoData: item.otherUser.primaryPhotoData,
+                                fallbackSymbol: item.otherUser.photoSymbol,
+                                size: 56,
+                                backgroundColor: Color.blue.opacity(0.14),
+                                symbolColor: .blue,
+                                strokeColor: Color.blue.opacity(0.3)
+                            )
 
                             VStack(alignment: .leading, spacing: 4) {
                                 HStack {
                                     Text(item.otherUser.headline)
                                         .font(.subheadline.weight(.bold))
-                                        .foregroundStyle(.primary)
+                                        .foregroundStyle(.white)
 
                                     Spacer(minLength: 0)
 
                                     if let lastMessage = item.lastMessage {
                                         Text(matchesRelativeTimeFormatter.localizedString(for: lastMessage.sentAt, relativeTo: .now))
                                             .font(.caption)
-                                            .foregroundStyle(.secondary)
+                                            .foregroundStyle(Color.white.opacity(0.72))
                                     }
                                 }
 
                                 Text(previewText(for: item))
                                     .font(.subheadline)
-                                    .foregroundStyle(.secondary)
+                                    .foregroundStyle(Color.white.opacity(0.88))
                                     .lineLimit(1)
                             }
                         }
                         .padding(12)
                         .frame(maxWidth: .infinity)
-                        .background(Color.white.opacity(0.78))
-                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        .background(
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .fill(Color.white.opacity(0.1))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                        .stroke(Color.white.opacity(0.18), lineWidth: 1)
+                                )
+                        )
                     }
                     .buttonStyle(.plain)
                 }
@@ -171,6 +170,6 @@ struct MatchesView<Destination: View>: View {
         if let lastMessage = item.lastMessage {
             return lastMessage.text
         }
-        return "Say hi to start chatting."
+        return "Dis bonjour pour lancer la discussion."
     }
 }

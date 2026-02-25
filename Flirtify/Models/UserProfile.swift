@@ -8,9 +8,15 @@ struct UserProfile: Identifiable, Equatable, Hashable {
     var bio: String
     var interests: [String]
     var photoSymbol: String
+    var photoData: Data?
+    var photoGalleryData: [Data]
     var likedUserIDs: Set<UUID>
 
     var headline: String {
         "\(firstName), \(age)"
+    }
+
+    var primaryPhotoData: Data? {
+        photoGalleryData.first ?? photoData
     }
 }

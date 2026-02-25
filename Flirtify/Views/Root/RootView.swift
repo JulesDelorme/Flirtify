@@ -14,8 +14,9 @@ struct RootView: View {
                         ageText: payload.ageText,
                         city: payload.city,
                         bio: payload.bio,
-                        interestsText: payload.interestsText,
-                        photoSymbol: payload.photoSymbol
+                        interests: payload.interests,
+                        photoData: payload.photoData,
+                        photoGalleryData: payload.photoGalleryData
                     )
                 }
             }

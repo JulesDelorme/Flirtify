@@ -46,7 +46,7 @@ struct TabRootView: View {
                 SwipeDeckView(viewModel: swipeViewModel)
             }
             .tabItem {
-                Label("Swipe", systemImage: "flame.fill")
+                Label("Decouvrir", systemImage: "flame.fill")
             }
             .tag(Tab.swipe)
 
@@ -61,7 +61,7 @@ struct TabRootView: View {
                 )
             }
             .tabItem {
-                Label("Matches", systemImage: "bubble.left.and.bubble.right.fill")
+                Label("Matchs", systemImage: "bubble.left.and.bubble.right.fill")
             }
             .tag(Tab.matches)
 
@@ -69,7 +69,7 @@ struct TabRootView: View {
                 ProfilView(viewModel: profileViewModel)
             }
             .tabItem {
-                Label("Profile", systemImage: "person.crop.circle")
+                Label("Profil", systemImage: "person.crop.circle")
             }
             .tag(Tab.profile)
         }

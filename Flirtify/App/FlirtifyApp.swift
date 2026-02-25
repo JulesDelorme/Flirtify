@@ -7,6 +7,7 @@ struct FlirtifyApp: App {
     var body: some Scene {
         WindowGroup {
             RootView(container: container)
+                .environment(\.locale, Locale(identifier: "fr_FR"))
         }
     }
 }

@@ -24,10 +24,15 @@ struct ProfileCardView: View {
                 .shadow(color: .black.opacity(0.2), radius: 12, x: 0, y: 8)
 
             VStack(alignment: .leading, spacing: 10) {
-                Image(systemName: profile.photoSymbol)
-                    .font(.system(size: 52, weight: .semibold))
-                    .foregroundStyle(.white.opacity(0.95))
-                    .padding(.bottom, 6)
+                ProfilePhotoView(
+                    photoData: profile.primaryPhotoData,
+                    fallbackSymbol: profile.photoSymbol,
+                    size: 86,
+                    backgroundColor: Color.white.opacity(0.2),
+                    symbolColor: .white,
+                    strokeColor: Color.white.opacity(0.5)
+                )
+                .padding(.bottom, 6)
 
                 Text(profile.headline)
                     .font(.title.bold())

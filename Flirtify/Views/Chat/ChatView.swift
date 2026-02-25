@@ -26,7 +26,7 @@ struct ChatView: View {
 
             composer
                 .padding()
-                .background(Color(.systemBackground))
+                .background(Color.black.opacity(0.25))
         }
         .navigationTitle(viewModel.otherUser.firstName)
         .navigationBarTitleDisplayMode(.inline)
@@ -37,14 +37,30 @@ struct ChatView: View {
 
     private var composer: some View {
         HStack(spacing: 10) {
-            TextField("Write a message...", text: $viewModel.draftMessage, axis: .vertical)
-                .textFieldStyle(.roundedBorder)
+            TextField(
+                "",
+                text: $viewModel.draftMessage,
+                prompt: Text("Ecris un message...").foregroundStyle(Color.white.opacity(0.55)),
+                axis: .vertical
+            )
+                .foregroundStyle(.white)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .fill(Color.white.opacity(0.08))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .stroke(Color.white.opacity(0.18), lineWidth: 1)
+                        )
+                )
+                .tint(.white)
 
             Button(action: viewModel.sendDraftMessage) {
                 Image(systemName: "paperplane.fill")
                     .foregroundStyle(.white)
                     .padding(10)
-                    .background(viewModel.canSendDraft ? Color.blue : Color.gray)
+                    .background(viewModel.canSendDraft ? Color.blue : Color.white.opacity(0.3))
                     .clipShape(Circle())
             }
             .disabled(!viewModel.canSendDraft)
@@ -61,15 +77,24 @@ struct ChatView: View {
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(message.text)
-                    .foregroundStyle(isCurrentUser ? Color.white : Color.primary)
+                    .foregroundStyle(.white)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 10)
-                    .background(isCurrentUser ? Color.blue : Color.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    .background(
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .fill(isCurrentUser ? Color.blue : Color.white.opacity(0.14))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                    .stroke(
+                                        isCurrentUser ? Color.clear : Color.white.opacity(0.2),
+                                        lineWidth: 1
+                                    )
+                            )
+                    )
 
                 Text(Self.timeFormatter.string(from: message.sentAt))
                     .font(.caption2)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.white.opacity(0.58))
             }
 
             if !isCurrentUser {

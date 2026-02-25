@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct ProfilView: View {
     @ObservedObject var viewModel: ProfileViewModel
@@ -8,12 +9,26 @@ struct ProfilView: View {
         ScrollView {
             if let profile = viewModel.profile {
                 VStack(spacing: 16) {
-                    Image(systemName: profile.photoSymbol)
-                        .font(.system(size: 72))
-                        .foregroundStyle(.blue)
-                        .frame(width: 120, height: 120)
-                        .background(Color.blue.opacity(0.12))
-                        .clipShape(Circle())
+                    ProfilePhotoView(
+                        photoData: profile.primaryPhotoData,
+                        fallbackSymbol: profile.photoSymbol,
+                        size: 124,
+                        backgroundColor: Color.blue.opacity(0.12),
+                        symbolColor: .blue,
+                        strokeColor: Color.blue.opacity(0.25)
+                    )
+
+                    if !profile.photoGalleryData.isEmpty {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 10) {
+                                ForEach(Array(profile.photoGalleryData.enumerated()), id: \.offset) { _, photoData in
+                                    profileThumbnail(photoData)
+                                }
+                            }
+                            .padding(.horizontal, 2)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
 
                     VStack(spacing: 4) {
                         Text(profile.headline)
@@ -27,7 +42,7 @@ struct ProfilView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Interests")
+                        Text("Centres d'interet")
                             .font(.headline)
                         LazyVGrid(columns: [GridItem(.adaptive(minimum: 100), spacing: 8)], alignment: .leading, spacing: 8) {
                             ForEach(profile.interests, id: \.self) { interest in
@@ -46,16 +61,16 @@ struct ProfilView: View {
                 .padding()
             } else {
                 EmptyStateView(
-                    title: "Profile unavailable",
-                    subtitle: "Try again in a moment.",
+                    title: "Profil indisponible",
+                    subtitle: "Reessaie dans un instant.",
                     symbol: "person.crop.circle.badge.exclamationmark"
                 )
             }
         }
-        .navigationTitle("My profile")
+        .navigationTitle("Mon profil")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button("Edit") {
+                Button("Modifier") {
                     isEditing = true
                 }
                 .disabled(viewModel.profile == nil)
@@ -69,8 +84,9 @@ struct ProfilView: View {
                         ageText: payload.ageText,
                         city: payload.city,
                         bio: payload.bio,
-                        interestsText: payload.interestsText,
-                        photoSymbol: payload.photoSymbol
+                        interests: payload.interests,
+                        photoData: payload.photoData,
+                        photoGalleryData: payload.photoGalleryData
                     )
                 }
             }
@@ -78,5 +94,24 @@ struct ProfilView: View {
         .onAppear {
             viewModel.loadProfile()
         }
+    }
+
+    private func profileThumbnail(_ photoData: Data) -> some View {
+        Group {
+            if let image = UIImage(data: photoData) {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                Color.blue.opacity(0.14)
+                    .overlay(Image(systemName: "photo"))
+            }
+        }
+        .frame(width: 76, height: 76)
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(Color.blue.opacity(0.24), lineWidth: 1)
+        )
     }
 }

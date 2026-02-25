@@ -35,7 +35,9 @@ final class UserRepository: ObservableObject {
         city: String,
         bio: String,
         interests: [String],
-        photoSymbol: String
+        photoData: Data?,
+        photoGalleryData: [Data] = [],
+        photoSymbol: String? = nil
     ) {
         guard var currentUser = currentUser() else {
             return
@@ -46,7 +48,12 @@ final class UserRepository: ObservableObject {
         currentUser.city = city
         currentUser.bio = bio
         currentUser.interests = interests
-        currentUser.photoSymbol = photoSymbol
+        let cleanedPhotoGalleryData = normalizedPhotoGallery(photoGalleryData, fallback: photoData)
+        currentUser.photoGalleryData = cleanedPhotoGalleryData
+        currentUser.photoData = cleanedPhotoGalleryData.first
+        if let photoSymbol {
+            currentUser.photoSymbol = photoSymbol
+        }
 
         guard let currentUserIndex = profiles.firstIndex(where: { $0.id == currentUser.id }) else {
             return
@@ -54,4 +61,21 @@ final class UserRepository: ObservableObject {
 
         profiles[currentUserIndex] = currentUser
     }
+
+    private func normalizedPhotoGallery(_ photoGalleryData: [Data], fallback: Data?) -> [Data] {
+        var uniquePhotos: [Data] = []
+        for photo in photoGalleryData {
+            if !uniquePhotos.contains(photo) {
+                uniquePhotos.append(photo)
+            }
+        }
+
+        if uniquePhotos.isEmpty, let fallback {
+            uniquePhotos = [fallback]
+        }
+
+        return Array(uniquePhotos.prefix(Self.maxProfilePhotos))
+    }
+
+    private static let maxProfilePhotos = 6
 }

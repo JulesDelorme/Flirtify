@@ -14,9 +14,11 @@ enum SeedData {
             firstName: "Jules",
             age: 26,
             city: "Bordeaux",
-            bio: "Product builder by day, ramen hunter by night.",
-            interests: ["Coffee", "Music", "Trips"],
+            bio: "Je construis des produits et je cherche les meilleurs spots ramen.",
+            interests: ["Cafe", "Musique", "Voyages"],
             photoSymbol: "person.crop.square.fill",
+            photoData: nil,
+            photoGalleryData: [],
             likedUserIDs: []
         ),
         UserProfile(
@@ -24,9 +26,11 @@ enum SeedData {
             firstName: "Lea",
             age: 24,
             city: "Bordeaux",
-            bio: "Runner, museum lover, and always up for espresso.",
-            interests: ["Running", "Museums", "Coffee"],
+            bio: "Running, musees et espresso a toute heure.",
+            interests: ["Running", "Art", "Cafe"],
             photoSymbol: "figure.run",
+            photoData: nil,
+            photoGalleryData: [],
             likedUserIDs: [currentUserID]
         ),
         UserProfile(
@@ -34,9 +38,11 @@ enum SeedData {
             firstName: "Camille",
             age: 27,
             city: "Toulouse",
-            bio: "Weekend cook and sunset photographer.",
-            interests: ["Cooking", "Photos", "Cycling"],
+            bio: "Cuisine du week-end et photos au coucher du soleil.",
+            interests: ["Cuisine", "Photographie", "Sport"],
             photoSymbol: "camera.fill",
+            photoData: nil,
+            photoGalleryData: [],
             likedUserIDs: []
         ),
         UserProfile(
@@ -44,9 +50,11 @@ enum SeedData {
             firstName: "Chloe",
             age: 25,
             city: "Lille",
-            bio: "Bookstores, concerts, and random train trips.",
-            interests: ["Books", "Concerts", "Travel"],
+            bio: "Librairies, concerts et voyages improvises.",
+            interests: ["Lecture", "Concerts", "Voyages"],
             photoSymbol: "book.fill",
+            photoData: nil,
+            photoGalleryData: [],
             likedUserIDs: [currentUserID]
         ),
         UserProfile(
@@ -54,9 +62,11 @@ enum SeedData {
             firstName: "Ines",
             age: 23,
             city: "Nantes",
-            bio: "Dog person, startup person, brunch person.",
-            interests: ["Dogs", "Startups", "Brunch"],
+            bio: "Team chiens, startups et brunch du dimanche.",
+            interests: ["Animaux", "Tech", "Brunch"],
             photoSymbol: "dog.fill",
+            photoData: nil,
+            photoGalleryData: [],
             likedUserIDs: []
         ),
         UserProfile(
@@ -64,9 +74,11 @@ enum SeedData {
             firstName: "Sarah",
             age: 28,
             city: "Paris",
-            bio: "Language nerd with a weak spot for vinyl records.",
-            interests: ["Languages", "Vinyl", "Hiking"],
+            bio: "Passionnee de langues et collectionneuse de vinyles.",
+            interests: ["Musique", "Randonnee", "Voyages"],
             photoSymbol: "music.note",
+            photoData: nil,
+            photoGalleryData: [],
             likedUserIDs: [currentUserID]
         ),
     ]

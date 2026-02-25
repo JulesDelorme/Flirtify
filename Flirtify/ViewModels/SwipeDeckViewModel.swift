@@ -74,7 +74,7 @@ final class SwipeDeckViewModel: ObservableObject {
                 _ = messageRepository.sendMessage(
                     matchID: match.id,
                     senderID: profile.id,
-                    text: "Hey \(userRepository.currentUser()?.firstName ?? "there"), happy we matched."
+                    text: "Salut \(userRepository.currentUser()?.firstName ?? "toi"), contente qu'on ait matché."
                 )
             }
         }

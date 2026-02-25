@@ -11,10 +11,10 @@ struct SwipeDeckView: View {
                 HStack(spacing: 10) {
                     Image(systemName: "sparkles")
                         .foregroundStyle(.pink)
-                    Text("It is a match with \(latestMatchUser.firstName).")
+                    Text("C'est un match avec \(latestMatchUser.firstName).")
                         .font(.subheadline.weight(.semibold))
                     Spacer(minLength: 0)
-                    Button("Close") {
+                    Button("Fermer") {
                         viewModel.dismissMatchBanner()
                     }
                     .font(.caption.weight(.semibold))
@@ -25,11 +25,20 @@ struct SwipeDeckView: View {
             }
 
             ZStack {
-                if let nextProfile = viewModel.deck.dropFirst().first {
-                    ProfileCardView(profile: nextProfile)
-                        .scaleEffect(0.95)
-                        .offset(y: 12)
-                        .opacity(0.45)
+                if viewModel.deck.dropFirst(2).first != nil {
+                    DeckBackgroundCardView()
+                        .scaleEffect(0.89)
+                        .offset(y: 34)
+                        .opacity(0.24)
+                        .allowsHitTesting(false)
+                }
+
+                if viewModel.deck.dropFirst().first != nil {
+                    DeckBackgroundCardView()
+                        .scaleEffect(0.93 + dragRevealProgress * 0.03)
+                        .offset(y: 20 - dragRevealProgress * 10)
+                        .opacity(0.5 + dragRevealProgress * 0.22)
+                        .allowsHitTesting(false)
                 }
 
                 if let profile = viewModel.topProfile {
@@ -38,14 +47,14 @@ struct SwipeDeckView: View {
                         .rotationEffect(.degrees(Double(dragOffset.width / 18)))
                         .overlay(alignment: .topLeading) {
                             decisionBadge(
-                                title: "NOPE",
+                                title: "NON",
                                 color: .red,
                                 isVisible: dragOffset.width < -60
                             )
                         }
                         .overlay(alignment: .topTrailing) {
                             decisionBadge(
-                                title: "LIKE",
+                                title: "J'AIME",
                                 color: .green,
                                 isVisible: dragOffset.width > 60
                             )
@@ -53,8 +62,8 @@ struct SwipeDeckView: View {
                         .gesture(cardDragGesture)
                 } else {
                     EmptyStateView(
-                        title: "No more profiles",
-                        subtitle: "You swiped every profile in the local seed.",
+                        title: "Plus de profils",
+                        subtitle: "Tu as parcouru tous les profils disponibles.",
                         symbol: "checkmark.seal"
                     )
                     .frame(height: 460)
@@ -75,10 +84,14 @@ struct SwipeDeckView: View {
             }
         }
         .padding()
-        .navigationTitle("Discover")
+        .navigationTitle("Decouvrir")
         .onAppear {
             viewModel.loadDeck()
         }
+    }
+
+    private var dragRevealProgress: CGFloat {
+        min(abs(dragOffset.width) / 170, 1)
     }
 
     private var cardDragGesture: some Gesture {
@@ -144,5 +157,28 @@ struct SwipeDeckView: View {
                 .shadow(color: .black.opacity(0.12), radius: 6, x: 0, y: 3)
         }
         .buttonStyle(.plain)
+    }
+}
+
+private struct DeckBackgroundCardView: View {
+    var body: some View {
+        RoundedRectangle(cornerRadius: 28, style: .continuous)
+            .fill(
+                LinearGradient(
+                    colors: [
+                        Color(red: 0.17, green: 0.26, blue: 0.44),
+                        Color(red: 0.52, green: 0.22, blue: 0.42),
+                        Color(red: 0.66, green: 0.38, blue: 0.21),
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 28, style: .continuous)
+                    .stroke(Color.white.opacity(0.2), lineWidth: 1)
+            )
+            .shadow(color: .black.opacity(0.16), radius: 10, x: 0, y: 6)
+            .frame(height: 460)
     }
 }
