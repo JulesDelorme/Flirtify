@@ -1,8 +1,34 @@
-//
-//  SwipeRepositories.swift
-//  Flirtify
-//
-//  Created by Jules Delorme on 25/02/2026.
-//
-
+import Combine
 import Foundation
+
+@MainActor
+final class SwipeRepository: ObservableObject {
+    @Published private(set) var swipes: [Swipe]
+
+    init(swipes: [Swipe] = []) {
+        self.swipes = swipes
+    }
+
+    func swipedProfileIDs(for userID: UUID) -> Set<UUID> {
+        Set(swipes.filter({ $0.fromUserID == userID }).map(\.toUserID))
+    }
+
+    func hasSwipe(from userID: UUID, to profileID: UUID) -> Bool {
+        swipes.contains(where: { $0.fromUserID == userID && $0.toUserID == profileID })
+    }
+
+    @discardableResult
+    func recordSwipe(from userID: UUID, to profileID: UUID, direction: SwipeDirection) -> Swipe? {
+        guard !hasSwipe(from: userID, to: profileID) else {
+            return nil
+        }
+
+        let swipe = Swipe(
+            fromUserID: userID,
+            toUserID: profileID,
+            direction: direction
+        )
+        swipes.append(swipe)
+        return swipe
+    }
+}

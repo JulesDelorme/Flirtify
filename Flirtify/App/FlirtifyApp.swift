@@ -1,8 +1,12 @@
-//
-//  FlirtifyApp.swift
-//  Flirtify
-//
-//  Created by Jules Delorme on 25/02/2026.
-//
+import SwiftUI
 
-import Foundation
+@main
+struct FlirtifyApp: App {
+    @StateObject private var container = AppContainer()
+
+    var body: some Scene {
+        WindowGroup {
+            RootView(container: container)
+        }
+    }
+}

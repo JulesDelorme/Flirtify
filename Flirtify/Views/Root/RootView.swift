@@ -1,8 +1,9 @@
-//
-//  RootView.swift
-//  Flirtify
-//
-//  Created by Jules Delorme on 25/02/2026.
-//
+import SwiftUI
 
-import Foundation
+struct RootView: View {
+    @ObservedObject var container: AppContainer
+
+    var body: some View {
+        TabRootView(container: container)
+    }
+}
