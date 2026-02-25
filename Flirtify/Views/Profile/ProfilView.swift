@@ -35,6 +35,9 @@ struct ProfilView: View {
                             .font(.title2.bold())
                         Text(profile.city)
                             .foregroundStyle(.secondary)
+                        Text("\(profile.sex.label) · \(profile.orientation.label)")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(.secondary)
                     }
 
                     Text(profile.bio)
@@ -84,6 +87,8 @@ struct ProfilView: View {
                         ageText: payload.ageText,
                         city: payload.city,
                         bio: payload.bio,
+                        sex: payload.sex,
+                        orientation: payload.orientation,
                         interests: payload.interests,
                         photoData: payload.photoData,
                         photoGalleryData: payload.photoGalleryData

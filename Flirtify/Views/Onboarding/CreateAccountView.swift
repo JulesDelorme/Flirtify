@@ -7,6 +7,8 @@ struct CreateAccountPayload {
     let ageText: String
     let city: String
     let bio: String
+    let sex: UserSex
+    let orientation: UserOrientation
     let interests: [String]
     let photoData: Data?
     let photoGalleryData: [Data]
@@ -20,6 +22,8 @@ struct CreateAccountView: View {
     @State private var ageText: String
     @State private var city: String
     @State private var bio: String
+    @State private var selectedSex: UserSex
+    @State private var selectedOrientation: UserOrientation
     @State private var selectedInterests: Set<String>
     @State private var photoGalleryData: [Data]
     @State private var selectedPhotoItems: [PhotosPickerItem] = []
@@ -31,6 +35,8 @@ struct CreateAccountView: View {
         _ageText = State(initialValue: initialProfile.map { String($0.age) } ?? "")
         _city = State(initialValue: initialProfile?.city ?? "")
         _bio = State(initialValue: initialProfile?.bio ?? "")
+        _selectedSex = State(initialValue: initialProfile?.sex ?? .male)
+        _selectedOrientation = State(initialValue: initialProfile?.orientation ?? .hetero)
         _selectedInterests = State(initialValue: Set(initialProfile?.interests ?? []))
         _photoGalleryData = State(initialValue: Self.initialProfilePhotoGalleryData(initialProfile))
     }
@@ -53,6 +59,7 @@ struct CreateAccountView: View {
                     titleBlock
                     photoSection
                     infoSection
+                    preferencesSection
                     interestsSection
 
                     PrimaryButton(title: "Creer mon compte", systemImage: "heart.fill") {
@@ -62,6 +69,8 @@ struct CreateAccountView: View {
                                 ageText: ageText,
                                 city: city,
                                 bio: bio,
+                                sex: selectedSex,
+                                orientation: selectedOrientation,
                                 interests: InterestCatalog.orderedSelection(from: selectedInterests),
                                 photoData: primaryPhotoData,
                                 photoGalleryData: photoGalleryData
@@ -194,6 +203,40 @@ struct CreateAccountView: View {
                 allInterests: InterestCatalog.all,
                 selectedInterests: $selectedInterests
             )
+        }
+        .padding(16)
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+    }
+
+    private var preferencesSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Preferences")
+                .font(.headline)
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Sexe")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                Picker("Sexe", selection: $selectedSex) {
+                    ForEach(UserSex.allCases) { sex in
+                        Text(sex.label).tag(sex)
+                    }
+                }
+                .pickerStyle(.segmented)
+            }
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Orientation")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                Picker("Orientation", selection: $selectedOrientation) {
+                    ForEach(UserOrientation.allCases) { orientation in
+                        Text(orientation.label).tag(orientation)
+                    }
+                }
+                .pickerStyle(.segmented)
+            }
         }
         .padding(16)
         .background(.ultraThinMaterial)

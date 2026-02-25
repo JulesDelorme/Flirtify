@@ -20,11 +20,16 @@ final class UserRepository: ObservableObject {
     }
 
     func candidateProfiles(excluding excludedIDs: Set<UUID>, matchedUserIDs: Set<UUID>) -> [UserProfile] {
-        profiles
+        guard let currentUser = currentUser() else {
+            return []
+        }
+
+        return profiles
             .filter { profile in
                 profile.id != currentUserID &&
                     !excludedIDs.contains(profile.id) &&
-                    !matchedUserIDs.contains(profile.id)
+                    !matchedUserIDs.contains(profile.id) &&
+                    currentUser.canMutuallyMatch(with: profile)
             }
             .sorted(by: { $0.firstName < $1.firstName })
     }
@@ -34,6 +39,8 @@ final class UserRepository: ObservableObject {
         age: Int,
         city: String,
         bio: String,
+        sex: UserSex,
+        orientation: UserOrientation,
         interests: [String],
         photoData: Data?,
         photoGalleryData: [Data] = [],
@@ -47,6 +54,8 @@ final class UserRepository: ObservableObject {
         currentUser.age = age
         currentUser.city = city
         currentUser.bio = bio
+        currentUser.sex = sex
+        currentUser.orientation = orientation
         currentUser.interests = interests
         let cleanedPhotoGalleryData = normalizedPhotoGallery(photoGalleryData, fallback: photoData)
         currentUser.photoGalleryData = cleanedPhotoGalleryData

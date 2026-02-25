@@ -7,6 +7,8 @@ struct EditProfilePayload {
     let ageText: String
     let city: String
     let bio: String
+    let sex: UserSex
+    let orientation: UserOrientation
     let interests: [String]
     let photoData: Data?
     let photoGalleryData: [Data]
@@ -21,6 +23,8 @@ struct EditProfileView: View {
     @State private var ageText: String
     @State private var city: String
     @State private var bio: String
+    @State private var selectedSex: UserSex
+    @State private var selectedOrientation: UserOrientation
     @State private var selectedInterests: Set<String>
     @State private var photoGalleryData: [Data]
     @State private var selectedPhotoItems: [PhotosPickerItem] = []
@@ -32,6 +36,8 @@ struct EditProfileView: View {
         _ageText = State(initialValue: String(profile.age))
         _city = State(initialValue: profile.city)
         _bio = State(initialValue: profile.bio)
+        _selectedSex = State(initialValue: profile.sex)
+        _selectedOrientation = State(initialValue: profile.orientation)
         _selectedInterests = State(initialValue: Set(profile.interests))
         _photoGalleryData = State(initialValue: Self.initialProfilePhotoGalleryData(profile))
     }
@@ -103,6 +109,22 @@ struct EditProfileView: View {
                         .lineLimit(3 ... 5)
                 }
 
+                Section("Preferences") {
+                    Picker("Sexe", selection: $selectedSex) {
+                        ForEach(UserSex.allCases) { sex in
+                            Text(sex.label).tag(sex)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+
+                    Picker("Orientation", selection: $selectedOrientation) {
+                        ForEach(UserOrientation.allCases) { orientation in
+                            Text(orientation.label).tag(orientation)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                }
+
                 Section("Centres d'interet") {
                     Text("\(selectedInterests.count) selectionnes")
                         .font(.caption)
@@ -130,6 +152,8 @@ struct EditProfileView: View {
                                 ageText: ageText,
                                 city: city,
                                 bio: bio,
+                                sex: selectedSex,
+                                orientation: selectedOrientation,
                                 interests: InterestCatalog.orderedSelection(from: selectedInterests),
                                 photoData: primaryPhotoData,
                                 photoGalleryData: photoGalleryData

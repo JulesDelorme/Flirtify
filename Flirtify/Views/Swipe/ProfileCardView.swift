@@ -42,6 +42,10 @@ struct ProfileCardView: View {
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.white.opacity(0.9))
 
+                Text("\(profile.sex.label) · \(profile.orientation.label)")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.white.opacity(0.82))
+
                 Text(profile.bio)
                     .font(.subheadline)
                     .foregroundStyle(.white.opacity(0.9))

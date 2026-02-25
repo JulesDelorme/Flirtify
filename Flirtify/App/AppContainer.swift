@@ -45,6 +45,8 @@ final class AppContainer: ObservableObject {
         ageText: String,
         city: String,
         bio: String,
+        sex: UserSex,
+        orientation: UserOrientation,
         interests: [String],
         photoData: Data?,
         photoGalleryData: [Data]
@@ -64,6 +66,8 @@ final class AppContainer: ObservableObject {
             age: clampedAge,
             city: cleanedCity.isEmpty ? "Ville inconnue" : cleanedCity,
             bio: cleanedBio.isEmpty ? "Pas encore de bio." : cleanedBio,
+            sex: sex,
+            orientation: orientation,
             interests: cleanedInterests.isEmpty ? ["Cafe"] : cleanedInterests,
             photoData: photoData,
             photoGalleryData: photoGalleryData
