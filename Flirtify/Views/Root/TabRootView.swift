@@ -4,6 +4,7 @@ struct TabRootView: View {
     private enum Tab: Hashable {
         case swipe
         case preferences
+        case events
         case matches
         case profile
     }
@@ -12,6 +13,7 @@ struct TabRootView: View {
 
     @State private var selectedTab: Tab = .swipe
     @State private var swipeViewModel: SwipeDeckViewModel
+    @State private var eventsViewModel: EventsViewModel
     @State private var matchesViewModel: MatchesViewModel
     @State private var profileViewModel: ProfileViewModel
 
@@ -30,8 +32,19 @@ struct TabRootView: View {
             initialValue: MatchesViewModel(
                 currentUserID: container.currentUserID,
                 userRepository: container.userRepository,
+                swipeRepository: container.swipeRepository,
                 matchRepository: container.matchRepository,
                 messageRepository: container.messageRepository
+            )
+        )
+        _eventsViewModel = State(
+            initialValue: EventsViewModel(
+                currentUserID: container.currentUserID,
+                userRepository: container.userRepository,
+                swipeRepository: container.swipeRepository,
+                matchRepository: container.matchRepository,
+                eventRepository: container.eventRepository,
+                locationService: container.locationService
             )
         )
         _profileViewModel = State(
@@ -58,6 +71,22 @@ struct TabRootView: View {
                 Label("Catégories", systemImage: "square.grid.2x2.fill")
             }
             .tag(Tab.preferences)
+
+            NavigationStack {
+                EventsView(viewModel: eventsViewModel)
+            }
+            .tabItem {
+                VStack(spacing: 2) {
+                    ZStack(alignment: .topTrailing) {
+                        Image(systemName: "mappin.and.ellipse")
+                        Image(systemName: "sparkles")
+                            .font(.system(size: 8, weight: .bold))
+                            .offset(x: 7, y: -5)
+                    }
+                    Text("Evenements")
+                }
+            }
+            .tag(Tab.events)
 
             MatchesView(viewModel: matchesViewModel) { match, otherUser in
                 ChatView(
@@ -96,6 +125,8 @@ struct TabRootView: View {
             swipeViewModel.loadDeck()
         case .preferences:
             profileViewModel.loadProfile()
+        case .events:
+            eventsViewModel.loadEvents()
         case .matches:
             matchesViewModel.loadMatches()
         case .profile:

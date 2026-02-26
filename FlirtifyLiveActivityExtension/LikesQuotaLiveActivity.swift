@@ -26,9 +26,13 @@ struct LikesQuotaLiveActivity: Widget {
                 }
 
                 DynamicIslandExpandedRegion(.bottom) {
-                    Text("Reinitialisation a \(Self.hourFormatter.string(from: context.state.resetAt))")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    HStack(spacing: 4) {
+                        Text("Reset dans")
+                        Text(context.state.resetAt, style: .timer)
+                            .monospacedDigit()
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
                 }
             } compactLeading: {
                 Image(systemName: "heart.fill")
@@ -60,8 +64,18 @@ struct LikesQuotaLiveActivity: Widget {
                 Text("Likes restants")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.secondary)
-                Text("\(state.remainingLikes)/\(state.dailyLimit) aujourd'hui")
+                Text("\(state.remainingLikes)/\(state.dailyLimit) sur \(Self.windowMinutes) min")
                     .font(.headline.weight(.bold))
+
+                HStack(spacing: 4) {
+                    Text("Reset dans")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Text(state.resetAt, style: .timer)
+                        .font(.caption.weight(.bold))
+                        .monospacedDigit()
+                        .foregroundStyle(.primary)
+                }
             }
 
             Spacer(minLength: 0)
@@ -71,10 +85,5 @@ struct LikesQuotaLiveActivity: Widget {
         .background(.ultraThinMaterial)
     }
 
-    private static let hourFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "fr_FR")
-        formatter.timeStyle = .short
-        return formatter
-    }()
+    private static let windowMinutes = 10
 }

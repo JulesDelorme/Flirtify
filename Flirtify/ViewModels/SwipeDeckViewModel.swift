@@ -5,18 +5,14 @@ import Observation
 @Observable
 final class SwipeDeckViewModel {
     private static let dailyLikeLimit = 6
-    private static let likesDayKeyStorage = "IOS.Flirtify.likes.dayKey"
+    private static let likesWindowDuration: TimeInterval = 10 * 60
+    private static let likesWindowStartStorage = "IOS.Flirtify.likes.windowStart"
     private static let likesUsedCountStorage = "IOS.Flirtify.likes.usedCount"
-    private static let dayFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = "yyyy-MM-dd"
-        return formatter
-    }()
 
     private(set) var deck: [UserProfile] = []
     var latestMatchUser: UserProfile?
     private(set) var likesRemainingToday = SwipeDeckViewModel.dailyLikeLimit
+    private(set) var likesResetAt = Date().addingTimeInterval(SwipeDeckViewModel.likesWindowDuration)
     private(set) var likeLimitReachedEventCount = 0
     var sexFilter: MatchSexFilter = .all {
         didSet { applyFilters() }
@@ -56,7 +52,7 @@ final class SwipeDeckViewModel {
         self.messageRepository = messageRepository
         self.likesActivityManager = likesActivityManager ?? .shared
         self.userDefaults = userDefaults
-        refreshDailyLikesQuota()
+        refreshLikesQuota()
         loadDeck()
     }
 
@@ -76,12 +72,16 @@ final class SwipeDeckViewModel {
         Self.dailyLikeLimit
     }
 
+    var likesWindowMinutes: Int {
+        Int(Self.likesWindowDuration / 60)
+    }
+
     var hasLikesRemaining: Bool {
         likesRemainingToday > 0
     }
 
     func loadDeck() {
-        refreshDailyLikesQuota()
+        refreshLikesQuota()
         let swipedIDs = swipeRepository.swipedProfileIDs(for: currentUserID)
         let matchedIDs = matchRepository.matchedUserIDs(for: currentUserID)
         allProfiles = userRepository.candidateProfiles(
@@ -153,6 +153,10 @@ final class SwipeDeckViewModel {
         likeLimitReachedEventCount += 1
     }
 
+    func refreshLikesQuotaState() {
+        refreshLikesQuota()
+    }
+
     private func applyFilters() {
         let currentUser = userRepository.currentUser()
 
@@ -182,40 +186,49 @@ final class SwipeDeckViewModel {
     }
 
     private func consumeLikeIfAvailable() -> Bool {
-        refreshDailyLikesQuota()
+        refreshLikesQuota()
         guard likesRemainingToday > 0 else {
             return false
         }
 
-        let usedCount = userDefaults.integer(forKey: Self.likesUsedCountStorage) + 1
+        let usedCount = min(Self.dailyLikeLimit, userDefaults.integer(forKey: Self.likesUsedCountStorage) + 1)
         userDefaults.set(usedCount, forKey: Self.likesUsedCountStorage)
         likesRemainingToday = max(0, Self.dailyLikeLimit - usedCount)
-        updateLikesActivity()
+        updateLikesActivity(resetAt: likesResetAt)
         return true
     }
 
-    private func refreshDailyLikesQuota() {
+    private func refreshLikesQuota() {
         let now = Date()
-        let todayKey = Self.dayFormatter.string(from: now)
-        let storedDayKey = userDefaults.string(forKey: Self.likesDayKeyStorage)
+        let windowStart = currentWindowStart(for: now)
+        likesResetAt = windowStart.addingTimeInterval(Self.likesWindowDuration)
 
-        if storedDayKey != todayKey {
-            userDefaults.set(todayKey, forKey: Self.likesDayKeyStorage)
-            userDefaults.set(0, forKey: Self.likesUsedCountStorage)
+        let storedUsedCount = userDefaults.integer(forKey: Self.likesUsedCountStorage)
+        let usedCount = min(max(storedUsedCount, 0), Self.dailyLikeLimit)
+        if usedCount != storedUsedCount {
+            userDefaults.set(usedCount, forKey: Self.likesUsedCountStorage)
         }
 
-        let usedCount = userDefaults.integer(forKey: Self.likesUsedCountStorage)
         likesRemainingToday = max(0, Self.dailyLikeLimit - usedCount)
-        updateLikesActivity()
+        updateLikesActivity(resetAt: likesResetAt)
     }
 
-    private func updateLikesActivity() {
-        let resetAt = Calendar.current.date(
-            byAdding: .day,
-            value: 1,
-            to: Calendar.current.startOfDay(for: Date())
-        ) ?? Date().addingTimeInterval(24 * 60 * 60)
+    private func currentWindowStart(for now: Date) -> Date {
+        let storedTimestamp = userDefaults.double(forKey: Self.likesWindowStartStorage)
+        if storedTimestamp > 0 {
+            let storedWindowStart = Date(timeIntervalSince1970: storedTimestamp)
+            let elapsed = now.timeIntervalSince(storedWindowStart)
+            if elapsed >= 0, elapsed < Self.likesWindowDuration {
+                return storedWindowStart
+            }
+        }
 
+        userDefaults.set(now.timeIntervalSince1970, forKey: Self.likesWindowStartStorage)
+        userDefaults.set(0, forKey: Self.likesUsedCountStorage)
+        return now
+    }
+
+    private func updateLikesActivity(resetAt: Date) {
         likesActivityManager.startOrUpdate(
             remainingLikes: likesRemainingToday,
             dailyLimit: Self.dailyLikeLimit,

@@ -28,6 +28,9 @@ struct MatchesView<Destination: View>: View {
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 22) {
                         topSummaryCard
+                        if viewModel.hasIncomingLikes {
+                            incomingLikesSection
+                        }
                         if viewModel.hasAnyMatches {
                             filterSection
                         }
@@ -73,6 +76,11 @@ struct MatchesView<Destination: View>: View {
                     .foregroundStyle(.secondary)
                 Text("\(viewModel.totalMatchesCount) match actif\(viewModel.totalMatchesCount > 1 ? "s" : "")")
                     .font(.title3.weight(.bold))
+                if viewModel.hasIncomingLikes {
+                    Text("\(viewModel.incomingLikesCount) like\(viewModel.incomingLikesCount > 1 ? "s" : "") en attente")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
                 if viewModel.hasActiveFilters {
                     Text("\(viewModel.items.count) affiche\(viewModel.items.count > 1 ? "s" : "")")
                         .font(.caption)
@@ -92,6 +100,108 @@ struct MatchesView<Destination: View>: View {
         .padding(16)
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+
+    private var incomingLikesSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("Qui t'a like")
+                    .font(.headline)
+
+                Spacer(minLength: 0)
+
+                Button {
+                    viewModel.togglePremiumLikesFeed()
+                } label: {
+                    Text(viewModel.isPremiumLikesFeedEnabled ? "Premium ON" : "Activer Premium")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 7)
+                        .background(
+                            Capsule(style: .continuous)
+                                .fill(Color.pink.opacity(0.8))
+                        )
+                }
+                .buttonStyle(.plain)
+            }
+
+            Text(viewModel.isPremiumLikesFeedEnabled ? "Apercu premium: infos partielles pour proteger la surprise." : "Version gratuite: profils masques. Active premium pour un apercu detaille.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    ForEach(Array(viewModel.incomingLikeProfiles.prefix(12))) { profile in
+                        incomingLikeCard(profile)
+                    }
+                }
+            }
+        }
+        .padding(14)
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+    }
+
+    private func incomingLikeCard(_ profile: UserProfile) -> some View {
+        let premiumEnabled = viewModel.isPremiumLikesFeedEnabled
+
+        return VStack(spacing: 8) {
+            ZStack {
+                ProfilePhotoView(
+                    photoData: profile.primaryPhotoData,
+                    fallbackSymbol: profile.photoSymbol,
+                    size: 72,
+                    backgroundColor: Color.pink.opacity(0.2),
+                    symbolColor: .white,
+                    strokeColor: Color.white.opacity(0.8)
+                )
+                .blur(radius: premiumEnabled ? 7 : 16)
+
+                if premiumEnabled {
+                    Text(String(profile.firstName.prefix(1)) + ".")
+                        .font(.headline.weight(.bold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.black.opacity(0.45))
+                        .clipShape(Capsule())
+                } else {
+                    Image(systemName: "lock.fill")
+                        .font(.title3.weight(.bold))
+                        .foregroundStyle(.white)
+                        .padding(10)
+                        .background(Color.black.opacity(0.45))
+                        .clipShape(Circle())
+                }
+            }
+
+            Text(premiumEnabled ? profile.city : "Profil mystere")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.white)
+                .lineLimit(1)
+
+            if premiumEnabled {
+                Text("\(viewModel.sharedInterestsCount(with: profile)) interets communs")
+                    .font(.caption2)
+                    .foregroundStyle(Color.white.opacity(0.75))
+            } else {
+                Text("Apercu premium")
+                    .font(.caption2)
+                    .foregroundStyle(Color.white.opacity(0.75))
+            }
+        }
+        .frame(width: 112)
+        .padding(.vertical, 10)
+        .padding(.horizontal, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(Color.white.opacity(0.1))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .stroke(Color.white.opacity(0.16), lineWidth: 1)
+                )
+        )
     }
 
     private var filterSection: some View {

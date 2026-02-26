@@ -21,6 +21,12 @@ enum SeedData {
     static let theoID = UUID(uuidString: "00000000-0000-0000-0000-000000000020")!
     static let karimID = UUID(uuidString: "00000000-0000-0000-0000-000000000021")!
     static let lucasID = UUID(uuidString: "00000000-0000-0000-0000-000000000022")!
+    static let eventAfterworkBdxID = UUID(uuidString: "10000000-0000-0000-0000-000000000001")!
+    static let eventExpoParisID = UUID(uuidString: "10000000-0000-0000-0000-000000000002")!
+    static let eventRunBdxID = UUID(uuidString: "10000000-0000-0000-0000-000000000003")!
+    static let eventFoodLyonID = UUID(uuidString: "10000000-0000-0000-0000-000000000004")!
+    static let eventMusicNantesID = UUID(uuidString: "10000000-0000-0000-0000-000000000005")!
+    static let eventAfterworkToulouseID = UUID(uuidString: "10000000-0000-0000-0000-000000000006")!
 
     static let initialProfiles: [UserProfile] = [
         UserProfile(
@@ -308,4 +314,82 @@ enum SeedData {
     static let initialSwipes: [Swipe] = []
     static let initialMatches: [Match] = []
     static let initialMessages: [Message] = []
+    static let initialEvents: [LocalEvent] = [
+        LocalEvent(
+            id: eventAfterworkBdxID,
+            title: "Afterwork quai des Chartrons",
+            category: .afterwork,
+            city: "Bordeaux",
+            venue: "Le Local",
+            latitude: 44.8533,
+            longitude: -0.5722,
+            startsAt: dateInFuture(hours: 6),
+            summary: "Networking chill avec terrasse et DJ set leger.",
+            attendeeUserIDs: [leaID, paulineID, manonID]
+        ),
+        LocalEvent(
+            id: eventExpoParisID,
+            title: "Expo photo urbaine",
+            category: .expo,
+            city: "Paris",
+            venue: "Galerie 11",
+            latitude: 48.8606,
+            longitude: 2.3376,
+            startsAt: dateInFuture(hours: 26),
+            summary: "Vernissage + rencontre artistes autour d'un verre.",
+            attendeeUserIDs: [sarahID, karimID, julieID]
+        ),
+        LocalEvent(
+            id: eventRunBdxID,
+            title: "Run club du dimanche",
+            category: .sport,
+            city: "Bordeaux",
+            venue: "Miroir d'eau",
+            latitude: 44.8413,
+            longitude: -0.5683,
+            startsAt: dateInFuture(hours: 44),
+            summary: "8 km rythme cool puis cafe debrief en groupe.",
+            attendeeUserIDs: [leaID, claraID, theoID, aminaID]
+        ),
+        LocalEvent(
+            id: eventFoodLyonID,
+            title: "Tour street-food",
+            category: .food,
+            city: "Lyon",
+            venue: "Presqu'ile",
+            latitude: 45.7597,
+            longitude: 4.8320,
+            startsAt: dateInFuture(hours: 30),
+            summary: "3 adresses, bonne ambiance et degustation en petit groupe.",
+            attendeeUserIDs: [lolaID, lucasID, camilleID]
+        ),
+        LocalEvent(
+            id: eventMusicNantesID,
+            title: "Open air electro",
+            category: .musique,
+            city: "Nantes",
+            venue: "Parc des Chantiers",
+            latitude: 47.2066,
+            longitude: -1.5622,
+            startsAt: dateInFuture(hours: 52),
+            summary: "Set sunset puis dancefloor en plein air.",
+            attendeeUserIDs: [chloeID, noraID, emmaID]
+        ),
+        LocalEvent(
+            id: eventAfterworkToulouseID,
+            title: "Afterwork jeux de societe",
+            category: .afterwork,
+            city: "Toulouse",
+            venue: "Le Comptoir Ludique",
+            latitude: 43.6045,
+            longitude: 1.4442,
+            startsAt: dateInFuture(hours: 18),
+            summary: "Tables de jeux, equipes random et ambiance detendue.",
+            attendeeUserIDs: [camilleID, hugoID, inesID]
+        ),
+    ]
+
+    private static func dateInFuture(hours: Int) -> Date {
+        Calendar.current.date(byAdding: .hour, value: hours, to: .now) ?? .now
+    }
 }

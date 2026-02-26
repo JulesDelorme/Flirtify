@@ -80,6 +80,8 @@ enum MatchOrientationFilter: String, CaseIterable, Identifiable {
 @Observable
 final class MatchesViewModel {
     private(set) var items: [MatchListItem] = []
+    private(set) var incomingLikeProfiles: [UserProfile] = []
+    var isPremiumLikesFeedEnabled = false
     var sexFilter: MatchSexFilter = .all {
         didSet { applyFilters() }
     }
@@ -97,17 +99,20 @@ final class MatchesViewModel {
 
     private let currentUserID: UUID
     private let userRepository: UserRepository
+    private let swipeRepository: SwipeRepository
     private let matchRepository: MatchRepository
     private let messageRepository: MessageRepository
 
     init(
         currentUserID: UUID,
         userRepository: UserRepository,
+        swipeRepository: SwipeRepository,
         matchRepository: MatchRepository,
         messageRepository: MessageRepository
     ) {
         self.currentUserID = currentUserID
         self.userRepository = userRepository
+        self.swipeRepository = swipeRepository
         self.matchRepository = matchRepository
         self.messageRepository = messageRepository
         loadMatches()
@@ -123,6 +128,25 @@ final class MatchesViewModel {
 
     var hasAnyMatches: Bool {
         !allItems.isEmpty
+    }
+
+    var hasIncomingLikes: Bool {
+        !incomingLikeProfiles.isEmpty
+    }
+
+    var incomingLikesCount: Int {
+        incomingLikeProfiles.count
+    }
+
+    func togglePremiumLikesFeed() {
+        isPremiumLikesFeedEnabled.toggle()
+    }
+
+    func sharedInterestsCount(with profile: UserProfile) -> Int {
+        guard let currentUser = userRepository.currentUser() else {
+            return 0
+        }
+        return Set(currentUser.interests).intersection(Set(profile.interests)).count
     }
 
     func resetFilters() {
@@ -147,7 +171,28 @@ final class MatchesViewModel {
                 lastMessage: messageRepository.lastMessage(for: match.id)
             )
         }
+        loadIncomingLikes()
         applyFilters()
+    }
+
+    private func loadIncomingLikes() {
+        guard let currentUser = userRepository.currentUser() else {
+            incomingLikeProfiles = []
+            return
+        }
+
+        let swipedIDs = swipeRepository.swipedProfileIDs(for: currentUserID)
+        let matchedIDs = matchRepository.matchedUserIDs(for: currentUserID)
+
+        incomingLikeProfiles = userRepository.profiles
+            .filter { profile in
+                profile.id != currentUserID &&
+                    profile.likedUserIDs.contains(currentUserID) &&
+                    !swipedIDs.contains(profile.id) &&
+                    !matchedIDs.contains(profile.id) &&
+                    currentUser.canMutuallyMatch(with: profile)
+            }
+            .sorted(by: { $0.firstName < $1.firstName })
     }
 
     private func applyFilters() {

@@ -11,19 +11,24 @@ final class AppContainer {
     let swipeRepository: SwipeRepository
     let matchRepository: MatchRepository
     let messageRepository: MessageRepository
+    let eventRepository: EventRepository
+    let locationService: LocationService
 
     init(
         currentUserID: UUID,
         profiles: [UserProfile],
         swipes: [Swipe],
         matches: [Match],
-        messages: [Message]
+        messages: [Message],
+        events: [LocalEvent]
     ) {
         self.currentUserID = currentUserID
         userRepository = UserRepository(profiles: profiles, currentUserID: currentUserID)
         swipeRepository = SwipeRepository(swipes: swipes)
         matchRepository = MatchRepository(matches: matches)
         messageRepository = MessageRepository(messages: messages)
+        eventRepository = EventRepository(events: events)
+        locationService = LocationService()
         hasCreatedAccount = UserDefaults.standard.bool(forKey: Self.accountCreatedFlagKey)
     }
 
@@ -33,7 +38,8 @@ final class AppContainer {
             profiles: SeedData.initialProfiles,
             swipes: SeedData.initialSwipes,
             matches: SeedData.initialMatches,
-            messages: SeedData.initialMessages
+            messages: SeedData.initialMessages,
+            events: SeedData.initialEvents
         )
     }
 

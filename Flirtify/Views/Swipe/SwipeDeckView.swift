@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 
 struct SwipeDeckView: View {
     let viewModel: SwipeDeckViewModel
@@ -9,6 +10,7 @@ struct SwipeDeckView: View {
     @State private var celebrationPulse = false
     @State private var celebrationSpin = false
     @State private var isLikeLimitAlertPresented = false
+    private let likesQuotaRefreshTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     var body: some View {
         VStack(spacing: 18) {
@@ -68,7 +70,7 @@ struct SwipeDeckView: View {
                 }
             }
 
-            Text("Likes restants: \(viewModel.likesRemainingToday)/\(viewModel.dailyLikesLimit)")
+            Text("Likes restants (\(viewModel.likesWindowMinutes) min): \(viewModel.likesRemainingToday)/\(viewModel.dailyLikesLimit)")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(.secondary)
         }
@@ -96,10 +98,15 @@ struct SwipeDeckView: View {
         .onChange(of: viewModel.likeLimitReachedEventCount) { _, _ in
             isLikeLimitAlertPresented = true
         }
+        .onReceive(likesQuotaRefreshTimer) { _ in
+            if !viewModel.hasLikesRemaining {
+                viewModel.refreshLikesQuotaState()
+            }
+        }
         .alert("Limite de likes atteinte", isPresented: $isLikeLimitAlertPresented) {
             Button("OK", role: .cancel) {}
         } message: {
-            Text("Tu as utilise tes 6 likes aujourd'hui. Reviens demain pour continuer.")
+            Text("Tu as utilise tes \(viewModel.dailyLikesLimit) likes pour cette periode de \(viewModel.likesWindowMinutes) minutes.")
         }
     }
 
