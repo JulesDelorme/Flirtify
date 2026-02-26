@@ -2,7 +2,7 @@ import SwiftUI
 import UIKit
 
 struct ProfilView: View {
-    @ObservedObject var viewModel: ProfileViewModel
+    let viewModel: ProfileViewModel
     @State private var isEditing = false
 
     var body: some View {

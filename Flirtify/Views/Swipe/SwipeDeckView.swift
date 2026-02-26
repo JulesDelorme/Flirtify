@@ -1,28 +1,16 @@
 import SwiftUI
 
 struct SwipeDeckView: View {
-    @ObservedObject var viewModel: SwipeDeckViewModel
+    let viewModel: SwipeDeckViewModel
 
     @State private var dragOffset: CGSize = .zero
+    @State private var isMatchIslandVisible = false
+    @State private var matchIslandDismissTask: Task<Void, Never>?
+    @State private var isLikeLimitAlertPresented = false
 
     var body: some View {
         VStack(spacing: 18) {
-            if let latestMatchUser = viewModel.latestMatchUser {
-                HStack(spacing: 10) {
-                    Image(systemName: "sparkles")
-                        .foregroundStyle(.pink)
-                    Text("C'est un match avec \(latestMatchUser.firstName).")
-                        .font(.subheadline.weight(.semibold))
-                    Spacer(minLength: 0)
-                    Button("Fermer") {
-                        viewModel.dismissMatchBanner()
-                    }
-                    .font(.caption.weight(.semibold))
-                }
-                .padding(12)
-                .background(Color.pink.opacity(0.12))
-                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-            }
+            filterSection
 
             ZStack {
                 if viewModel.deck.dropFirst(2).first != nil {
@@ -61,16 +49,7 @@ struct SwipeDeckView: View {
                         }
                         .gesture(cardDragGesture)
                 } else {
-                    EmptyStateView(
-                        title: "Plus de profils",
-                        subtitle: "Tu as parcouru tous les profils disponibles.",
-                        symbol: "checkmark.seal"
-                    )
-                    .frame(height: 460)
-                    .background(
-                        RoundedRectangle(cornerRadius: 28, style: .continuous)
-                            .fill(Color(.secondarySystemBackground))
-                    )
+                    emptyStateCard
                 }
             }
 
@@ -78,16 +57,273 @@ struct SwipeDeckView: View {
                 swipeActionButton(icon: "xmark", tint: .red) {
                     animateAndSwipe(.left)
                 }
-                swipeActionButton(icon: "heart.fill", tint: .green) {
+                swipeActionButton(
+                    icon: "heart.fill",
+                    tint: .green,
+                    isDisabled: !viewModel.hasLikesRemaining
+                ) {
                     animateAndSwipe(.right)
                 }
             }
+
+            Text("Likes restants: \(viewModel.likesRemainingToday)/\(viewModel.dailyLikesLimit)")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
         }
         .padding()
         .navigationTitle("Decouvrir")
+        .navigationBarTitleDisplayMode(.inline)
+        .safeAreaInset(edge: .top, spacing: 6) {
+            matchIslandOverlay
+        }
         .onAppear {
             viewModel.loadDeck()
         }
+        .onDisappear {
+            matchIslandDismissTask?.cancel()
+        }
+        .onChange(of: viewModel.latestMatchUser?.id) { _, newValue in
+            guard newValue != nil else {
+                withAnimation(.easeOut(duration: 0.2)) {
+                    isMatchIslandVisible = false
+                }
+                return
+            }
+            presentMatchIsland()
+        }
+        .onChange(of: viewModel.likeLimitReachedEventCount) { _, _ in
+            isLikeLimitAlertPresented = true
+        }
+        .alert("Limite de likes atteinte", isPresented: $isLikeLimitAlertPresented) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Tu as utilise tes 6 likes aujourd'hui. Reviens demain pour continuer.")
+        }
+    }
+
+    @ViewBuilder
+    private var matchIslandOverlay: some View {
+        if let latestMatchUser = viewModel.latestMatchUser, isMatchIslandVisible {
+            HStack(spacing: 10) {
+                ZStack {
+                    Circle()
+                        .fill(Color.pink.opacity(0.22))
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(.pink)
+                        .symbolEffect(.bounce, value: latestMatchUser.id)
+                }
+                .frame(width: 30, height: 30)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Nouveau match")
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(Color.white.opacity(0.72))
+                    Text("Toi + \(latestMatchUser.firstName)")
+                        .font(.subheadline.weight(.bold))
+                        .foregroundStyle(.white)
+                }
+
+                Spacer(minLength: 0)
+
+                Button {
+                    dismissMatchIsland()
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundStyle(Color.white.opacity(0.82))
+                        .frame(width: 22, height: 22)
+                        .background(Color.white.opacity(0.14))
+                        .clipShape(Circle())
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.vertical, 10)
+            .padding(.horizontal, 14)
+            .background(
+                Capsule(style: .continuous)
+                    .fill(Color.black.opacity(0.84))
+                    .overlay(
+                        Capsule(style: .continuous)
+                            .stroke(
+                                LinearGradient(
+                                    colors: [Color.white.opacity(0.32), Color.pink.opacity(0.55)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 1
+                            )
+                    )
+            )
+            .shadow(color: Color.black.opacity(0.34), radius: 12, x: 0, y: 8)
+            .padding(.horizontal, 30)
+            .transition(
+                .asymmetric(
+                    insertion: .move(edge: .top)
+                        .combined(with: .scale(scale: 0.9, anchor: .top))
+                        .combined(with: .opacity),
+                    removal: .move(edge: .top).combined(with: .opacity)
+                )
+            )
+        }
+    }
+
+    private func presentMatchIsland() {
+        matchIslandDismissTask?.cancel()
+        withAnimation(.spring(response: 0.42, dampingFraction: 0.84)) {
+            isMatchIslandVisible = true
+        }
+
+        matchIslandDismissTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 2_600_000_000)
+            guard !Task.isCancelled else {
+                return
+            }
+            dismissMatchIsland()
+        }
+    }
+
+    private func dismissMatchIsland() {
+        matchIslandDismissTask?.cancel()
+        let currentMatchID = viewModel.latestMatchUser?.id
+
+        withAnimation(.easeInOut(duration: 0.24)) {
+            isMatchIslandVisible = false
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.24) {
+            if viewModel.latestMatchUser?.id == currentMatchID {
+                viewModel.dismissMatchBanner()
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var filterSection: some View {
+        if viewModel.hasAnyProfiles {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    Text("Filtres")
+                        .font(.headline)
+
+                    Spacer(minLength: 0)
+
+                    if viewModel.hasActiveFilters {
+                        Button("Reinitialiser") {
+                            viewModel.resetFilters()
+                        }
+                        .font(.caption.weight(.semibold))
+                    }
+                }
+
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 10) {
+                        Menu {
+                            ForEach(MatchSexFilter.allCases) { filter in
+                                Button {
+                                    viewModel.sexFilter = filter
+                                } label: {
+                                    HStack {
+                                        Text(filter.label)
+                                        if viewModel.sexFilter == filter {
+                                            Image(systemName: "checkmark")
+                                        }
+                                    }
+                                }
+                            }
+                        } label: {
+                            filterChip(
+                                title: "Sexe: \(viewModel.sexFilter.label)",
+                                isActive: viewModel.sexFilter != .all
+                            )
+                        }
+
+                        Menu {
+                            ForEach(MatchOrientationFilter.allCases) { filter in
+                                Button {
+                                    viewModel.orientationFilter = filter
+                                } label: {
+                                    HStack {
+                                        Text(filter.label)
+                                        if viewModel.orientationFilter == filter {
+                                            Image(systemName: "checkmark")
+                                        }
+                                    }
+                                }
+                            }
+                        } label: {
+                            filterChip(
+                                title: "Orientation: \(viewModel.orientationFilter.label)",
+                                isActive: viewModel.orientationFilter != .all
+                            )
+                        }
+
+                        Button {
+                            viewModel.myPreferencesOnly.toggle()
+                        } label: {
+                            filterChip(
+                                title: "Mes preferences",
+                                isActive: viewModel.myPreferencesOnly
+                            )
+                        }
+                        .buttonStyle(.plain)
+
+                        Button {
+                            viewModel.sharedInterestsOnly.toggle()
+                        } label: {
+                            filterChip(
+                                title: "Interets en commun",
+                                isActive: viewModel.sharedInterestsOnly
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(.vertical, 1)
+                }
+            }
+            .padding(14)
+            .background(.ultraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        }
+    }
+
+    private var emptyStateCard: some View {
+        VStack(spacing: 14) {
+            if viewModel.hasAnyProfiles, viewModel.hasActiveFilters {
+                EmptyStateView(
+                    title: "Aucun profil avec ces filtres",
+                    subtitle: "Ajuste tes preferences pour relancer le swipe.",
+                    symbol: "line.3.horizontal.decrease.circle"
+                )
+                Button("Reinitialiser les filtres") {
+                    viewModel.resetFilters()
+                }
+                .font(.subheadline.weight(.semibold))
+            } else {
+                EmptyStateView(
+                    title: "Plus de profils",
+                    subtitle: "Tu as parcouru tous les profils disponibles.",
+                    symbol: "checkmark.seal"
+                )
+            }
+        }
+        .frame(height: 460)
+        .background(
+            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                .fill(Color(.secondarySystemBackground))
+        )
+    }
+
+    private func filterChip(title: String, isActive: Bool) -> some View {
+        Text(title)
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(isActive ? Color.white : Color.primary)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(
+                Capsule(style: .continuous)
+                    .fill(isActive ? Color.blue.opacity(0.72) : Color.white.opacity(0.24))
+            )
     }
 
     private var dragRevealProgress: CGFloat {
@@ -102,7 +338,14 @@ struct SwipeDeckView: View {
             .onEnded { value in
                 let threshold: CGFloat = 120
                 if value.translation.width > threshold {
-                    animateAndSwipe(.right)
+                    if viewModel.hasLikesRemaining {
+                        animateAndSwipe(.right)
+                    } else {
+                        viewModel.notifyLikeLimitReached()
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.75)) {
+                            dragOffset = .zero
+                        }
+                    }
                 } else if value.translation.width < -threshold {
                     animateAndSwipe(.left)
                 } else {
@@ -115,6 +358,11 @@ struct SwipeDeckView: View {
 
     private func animateAndSwipe(_ direction: SwipeDirection) {
         guard viewModel.topProfile != nil else {
+            return
+        }
+
+        if direction == .right, !viewModel.hasLikesRemaining {
+            viewModel.notifyLikeLimitReached()
             return
         }
 
@@ -146,7 +394,12 @@ struct SwipeDeckView: View {
         }
     }
 
-    private func swipeActionButton(icon: String, tint: Color, action: @escaping () -> Void) -> some View {
+    private func swipeActionButton(
+        icon: String,
+        tint: Color,
+        isDisabled: Bool = false,
+        action: @escaping () -> Void
+    ) -> some View {
         Button(action: action) {
             Image(systemName: icon)
                 .font(.system(size: 22, weight: .bold))
@@ -155,7 +408,9 @@ struct SwipeDeckView: View {
                 .background(Color(.systemBackground))
                 .clipShape(Circle())
                 .shadow(color: .black.opacity(0.12), radius: 6, x: 0, y: 3)
+                .opacity(isDisabled ? 0.45 : 1)
         }
+        .disabled(isDisabled)
         .buttonStyle(.plain)
     }
 }

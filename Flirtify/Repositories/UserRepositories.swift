@@ -1,9 +1,10 @@
-import Combine
 import Foundation
+import Observation
 
 @MainActor
-final class UserRepository: ObservableObject {
-    @Published private(set) var profiles: [UserProfile]
+@Observable
+final class UserRepository {
+    private(set) var profiles: [UserProfile]
     let currentUserID: UUID
 
     init(profiles: [UserProfile], currentUserID: UUID) {

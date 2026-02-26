@@ -1,9 +1,10 @@
-import Combine
 import Foundation
+import Observation
 
 @MainActor
-final class SwipeRepository: ObservableObject {
-    @Published private(set) var swipes: [Swipe]
+@Observable
+final class SwipeRepository {
+    private(set) var swipes: [Swipe]
 
     init(swipes: [Swipe] = []) {
         self.swipes = swipes

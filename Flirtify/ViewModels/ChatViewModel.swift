@@ -1,10 +1,11 @@
-import Combine
 import Foundation
+import Observation
 
 @MainActor
-final class ChatViewModel: ObservableObject {
-    @Published private(set) var messages: [Message] = []
-    @Published var draftMessage: String = ""
+@Observable
+final class ChatViewModel {
+    private(set) var messages: [Message] = []
+    var draftMessage: String = ""
 
     let match: Match
     let otherUser: UserProfile

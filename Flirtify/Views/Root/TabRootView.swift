@@ -10,14 +10,14 @@ struct TabRootView: View {
     let container: AppContainer
 
     @State private var selectedTab: Tab = .swipe
-    @StateObject private var swipeViewModel: SwipeDeckViewModel
-    @StateObject private var matchesViewModel: MatchesViewModel
-    @StateObject private var profileViewModel: ProfileViewModel
+    @State private var swipeViewModel: SwipeDeckViewModel
+    @State private var matchesViewModel: MatchesViewModel
+    @State private var profileViewModel: ProfileViewModel
 
     init(container: AppContainer) {
         self.container = container
-        _swipeViewModel = StateObject(
-            wrappedValue: SwipeDeckViewModel(
+        _swipeViewModel = State(
+            initialValue: SwipeDeckViewModel(
                 currentUserID: container.currentUserID,
                 userRepository: container.userRepository,
                 swipeRepository: container.swipeRepository,
@@ -25,16 +25,16 @@ struct TabRootView: View {
                 messageRepository: container.messageRepository
             )
         )
-        _matchesViewModel = StateObject(
-            wrappedValue: MatchesViewModel(
+        _matchesViewModel = State(
+            initialValue: MatchesViewModel(
                 currentUserID: container.currentUserID,
                 userRepository: container.userRepository,
                 matchRepository: container.matchRepository,
                 messageRepository: container.messageRepository
             )
         )
-        _profileViewModel = StateObject(
-            wrappedValue: ProfileViewModel(
+        _profileViewModel = State(
+            initialValue: ProfileViewModel(
                 userRepository: container.userRepository
             )
         )

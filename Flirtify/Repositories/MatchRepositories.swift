@@ -1,9 +1,10 @@
-import Combine
 import Foundation
+import Observation
 
 @MainActor
-final class MatchRepository: ObservableObject {
-    @Published private(set) var matches: [Match]
+@Observable
+final class MatchRepository {
+    private(set) var matches: [Match]
 
     init(matches: [Match] = []) {
         self.matches = matches

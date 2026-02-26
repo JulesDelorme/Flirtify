@@ -1,9 +1,10 @@
-import Combine
 import Foundation
+import Observation
 
 @MainActor
-final class ProfileViewModel: ObservableObject {
-    @Published private(set) var profile: UserProfile?
+@Observable
+final class ProfileViewModel {
+    private(set) var profile: UserProfile?
 
     private let userRepository: UserRepository
 

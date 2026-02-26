@@ -8,7 +8,7 @@ private let matchesRelativeTimeFormatter: RelativeDateTimeFormatter = {
 }()
 
 struct MatchesView<Destination: View>: View {
-    @ObservedObject var viewModel: MatchesViewModel
+    let viewModel: MatchesViewModel
     let destinationBuilder: (Match, UserProfile) -> Destination
 
     var body: some View {
@@ -28,13 +28,26 @@ struct MatchesView<Destination: View>: View {
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 22) {
                         topSummaryCard
+                        if viewModel.hasAnyMatches {
+                            filterSection
+                        }
 
                         if viewModel.items.isEmpty {
-                            EmptyStateView(
-                                title: "Aucun match pour l'instant",
-                                subtitle: "Glisse a droite sur les profils qui t'ont deja aime.",
-                                symbol: "bubble.left.and.bubble.right"
-                            )
+                            Group {
+                                if viewModel.hasAnyMatches {
+                                    EmptyStateView(
+                                        title: "Aucun resultat",
+                                        subtitle: "Ajuste tes filtres pour voir plus de profils.",
+                                        symbol: "line.3.horizontal.decrease.circle"
+                                    )
+                                } else {
+                                    EmptyStateView(
+                                        title: "Aucun match pour l'instant",
+                                        subtitle: "Glisse a droite sur les profils qui t'ont deja aime.",
+                                        symbol: "bubble.left.and.bubble.right"
+                                    )
+                                }
+                            }
                             .padding(.top, 30)
                         } else {
                             newMatchesSection
@@ -58,8 +71,13 @@ struct MatchesView<Destination: View>: View {
                 Text("Ta messagerie")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.secondary)
-                Text("\(viewModel.items.count) match actif\(viewModel.items.count > 1 ? "s" : "")")
+                Text("\(viewModel.totalMatchesCount) match actif\(viewModel.totalMatchesCount > 1 ? "s" : "")")
                     .font(.title3.weight(.bold))
+                if viewModel.hasActiveFilters {
+                    Text("\(viewModel.items.count) affiche\(viewModel.items.count > 1 ? "s" : "")")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
 
             Spacer(minLength: 0)
@@ -74,6 +92,104 @@ struct MatchesView<Destination: View>: View {
         .padding(16)
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+
+    private var filterSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Text("Filtres")
+                    .font(.headline)
+
+                Spacer(minLength: 0)
+
+                if viewModel.hasActiveFilters {
+                    Button("Reinitialiser") {
+                        viewModel.resetFilters()
+                    }
+                    .font(.caption.weight(.semibold))
+                }
+            }
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 10) {
+                    Menu {
+                        ForEach(MatchSexFilter.allCases) { filter in
+                            Button {
+                                viewModel.sexFilter = filter
+                            } label: {
+                                HStack {
+                                    Text(filter.label)
+                                    if viewModel.sexFilter == filter {
+                                        Image(systemName: "checkmark")
+                                    }
+                                }
+                            }
+                        }
+                    } label: {
+                        filterChip(
+                            title: "Sexe: \(viewModel.sexFilter.label)",
+                            isActive: viewModel.sexFilter != .all
+                        )
+                    }
+
+                    Menu {
+                        ForEach(MatchOrientationFilter.allCases) { filter in
+                            Button {
+                                viewModel.orientationFilter = filter
+                            } label: {
+                                HStack {
+                                    Text(filter.label)
+                                    if viewModel.orientationFilter == filter {
+                                        Image(systemName: "checkmark")
+                                    }
+                                }
+                            }
+                        }
+                    } label: {
+                        filterChip(
+                            title: "Orientation: \(viewModel.orientationFilter.label)",
+                            isActive: viewModel.orientationFilter != .all
+                        )
+                    }
+
+                    Button {
+                        viewModel.myPreferencesOnly.toggle()
+                    } label: {
+                        filterChip(
+                            title: "Mes preferences",
+                            isActive: viewModel.myPreferencesOnly
+                        )
+                    }
+                    .buttonStyle(.plain)
+
+                    Button {
+                        viewModel.sharedInterestsOnly.toggle()
+                    } label: {
+                        filterChip(
+                            title: "Interets en commun",
+                            isActive: viewModel.sharedInterestsOnly
+                        )
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(.vertical, 1)
+            }
+        }
+        .padding(14)
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+    }
+
+    private func filterChip(title: String, isActive: Bool) -> some View {
+        Text(title)
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(isActive ? Color.white : Color.primary)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(
+                Capsule(style: .continuous)
+                    .fill(isActive ? Color.blue.opacity(0.72) : Color.white.opacity(0.24))
+            )
     }
 
     private var newMatchesSection: some View {

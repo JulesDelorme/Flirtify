@@ -1,7 +1,8 @@
+import Observation
 import SwiftUI
 
 struct ChatView: View {
-    @ObservedObject var viewModel: ChatViewModel
+    let viewModel: ChatViewModel
 
     var body: some View {
         VStack(spacing: 0) {
@@ -36,10 +37,12 @@ struct ChatView: View {
     }
 
     private var composer: some View {
-        HStack(spacing: 10) {
+        @Bindable var bindableViewModel = viewModel
+
+        return HStack(spacing: 10) {
             TextField(
                 "",
-                text: $viewModel.draftMessage,
+                text: $bindableViewModel.draftMessage,
                 prompt: Text("Ecris un message...").foregroundStyle(Color.white.opacity(0.55)),
                 axis: .vertical
             )

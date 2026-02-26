@@ -1,9 +1,10 @@
-import Combine
 import Foundation
+import Observation
 
 @MainActor
-final class MessageRepository: ObservableObject {
-    @Published private(set) var messages: [Message]
+@Observable
+final class MessageRepository {
+    private(set) var messages: [Message]
 
     init(messages: [Message] = []) {
         self.messages = messages

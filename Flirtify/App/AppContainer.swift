@@ -1,9 +1,10 @@
-import Combine
 import Foundation
+import Observation
 
 @MainActor
-final class AppContainer: ObservableObject {
-    @Published private(set) var hasCreatedAccount: Bool
+@Observable
+final class AppContainer {
+    private(set) var hasCreatedAccount: Bool
 
     let currentUserID: UUID
     let userRepository: UserRepository
