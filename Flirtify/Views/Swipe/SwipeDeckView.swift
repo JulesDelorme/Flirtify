@@ -4,8 +4,10 @@ struct SwipeDeckView: View {
     let viewModel: SwipeDeckViewModel
 
     @State private var dragOffset: CGSize = .zero
-    @State private var isMatchIslandVisible = false
-    @State private var matchIslandDismissTask: Task<Void, Never>?
+    @State private var isMatchCelebrationVisible = false
+    @State private var matchCelebrationDismissTask: Task<Void, Never>?
+    @State private var celebrationPulse = false
+    @State private var celebrationSpin = false
     @State private var isLikeLimitAlertPresented = false
 
     var body: some View {
@@ -73,23 +75,23 @@ struct SwipeDeckView: View {
         .padding()
         .navigationTitle("Decouvrir")
         .navigationBarTitleDisplayMode(.inline)
-        .safeAreaInset(edge: .top, spacing: 6) {
-            matchIslandOverlay
+        .overlay {
+            matchCelebrationOverlay
         }
         .onAppear {
             viewModel.loadDeck()
         }
         .onDisappear {
-            matchIslandDismissTask?.cancel()
+            matchCelebrationDismissTask?.cancel()
         }
         .onChange(of: viewModel.latestMatchUser?.id) { _, newValue in
             guard newValue != nil else {
                 withAnimation(.easeOut(duration: 0.2)) {
-                    isMatchIslandVisible = false
+                    isMatchCelebrationVisible = false
                 }
                 return
             }
-            presentMatchIsland()
+            presentMatchCelebration()
         }
         .onChange(of: viewModel.likeLimitReachedEventCount) { _, _ in
             isLikeLimitAlertPresented = true
@@ -102,93 +104,129 @@ struct SwipeDeckView: View {
     }
 
     @ViewBuilder
-    private var matchIslandOverlay: some View {
-        if let latestMatchUser = viewModel.latestMatchUser, isMatchIslandVisible {
-            HStack(spacing: 10) {
-                ZStack {
+    private var matchCelebrationOverlay: some View {
+        if let latestMatchUser = viewModel.latestMatchUser, isMatchCelebrationVisible {
+            ZStack {
+                Rectangle()
+                    .fill(Color.black.opacity(0.64))
+                    .ignoresSafeArea()
+
+                LinearGradient(
+                    colors: [
+                        Color(red: 0.12, green: 0.27, blue: 0.53),
+                        Color(red: 0.59, green: 0.16, blue: 0.37),
+                        Color(red: 0.72, green: 0.33, blue: 0.16),
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .opacity(0.94)
+                .ignoresSafeArea()
+
+                ForEach(0..<7, id: \.self) { index in
                     Circle()
-                        .fill(Color.pink.opacity(0.22))
-                    Image(systemName: "sparkles")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundStyle(.pink)
-                        .symbolEffect(.bounce, value: latestMatchUser.id)
-                }
-                .frame(width: 30, height: 30)
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Nouveau match")
-                        .font(.caption2.weight(.semibold))
-                        .foregroundStyle(Color.white.opacity(0.72))
-                    Text("Toi + \(latestMatchUser.firstName)")
-                        .font(.subheadline.weight(.bold))
-                        .foregroundStyle(.white)
+                        .stroke(Color.white.opacity(0.24), lineWidth: 2)
+                        .frame(
+                            width: CGFloat(120 + (index * 56)),
+                            height: CGFloat(120 + (index * 56))
+                        )
+                        .scaleEffect(celebrationPulse ? 1.08 : 0.56)
+                        .opacity(celebrationPulse ? 0 : 0.44)
+                        .animation(
+                            .easeOut(duration: 1.45)
+                                .repeatForever(autoreverses: false)
+                                .delay(Double(index) * 0.12),
+                            value: celebrationPulse
+                        )
                 }
 
-                Spacer(minLength: 0)
+                VStack(spacing: 22) {
+                    ZStack {
+                        Circle()
+                            .fill(Color.white.opacity(0.19))
+                            .frame(width: 120, height: 120)
 
-                Button {
-                    dismissMatchIsland()
-                } label: {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 10, weight: .bold))
-                        .foregroundStyle(Color.white.opacity(0.82))
-                        .frame(width: 22, height: 22)
-                        .background(Color.white.opacity(0.14))
-                        .clipShape(Circle())
-                }
-                .buttonStyle(.plain)
-            }
-            .padding(.vertical, 10)
-            .padding(.horizontal, 14)
-            .background(
-                Capsule(style: .continuous)
-                    .fill(Color.black.opacity(0.84))
-                    .overlay(
-                        Capsule(style: .continuous)
-                            .stroke(
-                                LinearGradient(
-                                    colors: [Color.white.opacity(0.32), Color.pink.opacity(0.55)],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: 1
+                        Image(systemName: "sparkles")
+                            .font(.system(size: 46, weight: .bold))
+                            .foregroundStyle(.white)
+                            .rotationEffect(.degrees(celebrationSpin ? 14 : -14))
+                            .animation(
+                                .easeInOut(duration: 0.82)
+                                    .repeatForever(autoreverses: true),
+                                value: celebrationSpin
                             )
-                    )
-            )
-            .shadow(color: Color.black.opacity(0.34), radius: 12, x: 0, y: 8)
-            .padding(.horizontal, 30)
+                    }
+
+                    VStack(spacing: 10) {
+                        Text("C'est un match !")
+                            .font(.system(size: 42, weight: .black, design: .rounded))
+                            .foregroundStyle(.white)
+                            .multilineTextAlignment(.center)
+                            .minimumScaleFactor(0.68)
+
+                        Text("Toi et \(latestMatchUser.firstName) vous vous etes likes.")
+                            .font(.headline.weight(.semibold))
+                            .foregroundStyle(Color.white.opacity(0.9))
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 22)
+                    }
+
+                    Button {
+                        dismissMatchCelebration()
+                    } label: {
+                        Text("Continuer")
+                            .font(.headline.weight(.bold))
+                            .foregroundStyle(.black)
+                            .padding(.horizontal, 34)
+                            .padding(.vertical, 14)
+                            .background(
+                                Capsule(style: .continuous)
+                                    .fill(Color.white)
+                            )
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(.horizontal, 26)
+            }
+            .zIndex(50)
             .transition(
                 .asymmetric(
-                    insertion: .move(edge: .top)
-                        .combined(with: .scale(scale: 0.9, anchor: .top))
-                        .combined(with: .opacity),
-                    removal: .move(edge: .top).combined(with: .opacity)
+                    insertion: .opacity.combined(with: .scale(scale: 0.94)),
+                    removal: .opacity
                 )
             )
+            .onAppear {
+                celebrationPulse = true
+                celebrationSpin = true
+            }
+            .onDisappear {
+                celebrationPulse = false
+                celebrationSpin = false
+            }
         }
     }
 
-    private func presentMatchIsland() {
-        matchIslandDismissTask?.cancel()
+    private func presentMatchCelebration() {
+        matchCelebrationDismissTask?.cancel()
         withAnimation(.spring(response: 0.42, dampingFraction: 0.84)) {
-            isMatchIslandVisible = true
+            isMatchCelebrationVisible = true
         }
 
-        matchIslandDismissTask = Task { @MainActor in
+        matchCelebrationDismissTask = Task { @MainActor in
             try? await Task.sleep(nanoseconds: 2_600_000_000)
             guard !Task.isCancelled else {
                 return
             }
-            dismissMatchIsland()
+            dismissMatchCelebration()
         }
     }
 
-    private func dismissMatchIsland() {
-        matchIslandDismissTask?.cancel()
+    private func dismissMatchCelebration() {
+        matchCelebrationDismissTask?.cancel()
         let currentMatchID = viewModel.latestMatchUser?.id
 
         withAnimation(.easeInOut(duration: 0.24)) {
-            isMatchIslandVisible = false
+            isMatchCelebrationVisible = false
         }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.24) {

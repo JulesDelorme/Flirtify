@@ -38,7 +38,8 @@ struct EditProfileView: View {
         _bio = State(initialValue: profile.bio)
         _selectedSex = State(initialValue: profile.sex)
         _selectedOrientation = State(initialValue: profile.orientation)
-        _selectedInterests = State(initialValue: Set(profile.interests))
+        let initialInterests = Array(profile.interests.prefix(InterestCatalog.maxSelectable))
+        _selectedInterests = State(initialValue: Set(initialInterests))
         _photoGalleryData = State(initialValue: Self.initialProfilePhotoGalleryData(profile))
     }
 
@@ -126,12 +127,19 @@ struct EditProfileView: View {
                 }
 
                 Section("Centres d'interet") {
-                    Text("\(selectedInterests.count) selectionnes")
+                    Text("\(selectedInterests.count)/\(InterestCatalog.maxSelectable) selectionnes")
+                        .font(.caption)
+                        .foregroundStyle(
+                            hasValidInterestSelection ? Color.secondary : Color.orange
+                        )
+
+                    Text("Choisis exactement \(InterestCatalog.maxSelectable) centres d'interet.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
 
                     InterestChipsPicker(
-                        allInterests: InterestCatalog.all,
+                        categories: InterestCatalog.categories,
+                        maxSelectionCount: InterestCatalog.maxSelectable,
                         selectedInterests: $selectedInterests
                     )
                     .padding(.vertical, 4)
@@ -154,13 +162,18 @@ struct EditProfileView: View {
                                 bio: bio,
                                 sex: selectedSex,
                                 orientation: selectedOrientation,
-                                interests: InterestCatalog.orderedSelection(from: selectedInterests),
+                                interests: Array(
+                                    InterestCatalog
+                                        .orderedSelection(from: selectedInterests)
+                                        .prefix(InterestCatalog.maxSelectable)
+                                ),
                                 photoData: primaryPhotoData,
                                 photoGalleryData: photoGalleryData
                             )
                         )
                         dismiss()
                     }
+                    .disabled(!hasValidInterestSelection)
                 }
             }
         }
@@ -173,6 +186,10 @@ struct EditProfileView: View {
 
     private var primaryPhotoData: Data? {
         photoGalleryData.first
+    }
+
+    private var hasValidInterestSelection: Bool {
+        selectedInterests.count == InterestCatalog.maxSelectable
     }
 
     private func removePhoto(at index: Int) {

@@ -58,6 +58,7 @@ final class AppContainer {
         let cleanedInterests = interests
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { !$0.isEmpty }
+        let cappedInterests = Array(cleanedInterests.prefix(InterestCatalog.maxSelectable))
 
         let parsedAge = Int(ageText) ?? 18
         let clampedAge = min(max(parsedAge, 18), 99)
@@ -69,7 +70,7 @@ final class AppContainer {
             bio: cleanedBio.isEmpty ? "Pas encore de bio." : cleanedBio,
             sex: sex,
             orientation: orientation,
-            interests: cleanedInterests.isEmpty ? ["Cafe"] : cleanedInterests,
+            interests: cappedInterests.isEmpty ? ["Cafe"] : cappedInterests,
             photoData: photoData,
             photoGalleryData: photoGalleryData
         )

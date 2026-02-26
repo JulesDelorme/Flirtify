@@ -49,17 +49,59 @@ struct ProfilView: View {
                             .font(.headline)
                         LazyVGrid(columns: [GridItem(.adaptive(minimum: 100), spacing: 8)], alignment: .leading, spacing: 8) {
                             ForEach(profile.interests, id: \.self) { interest in
-                                Text(interest)
-                                    .font(.caption.weight(.semibold))
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 6)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .background(Color.blue.opacity(0.14))
-                                    .clipShape(Capsule())
+                                NavigationLink {
+                                    PreferenceCategoryProfilesView(
+                                        viewModel: viewModel,
+                                        category: interest
+                                    )
+                                } label: {
+                                    Text(interest)
+                                        .font(.caption.weight(.semibold))
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 6)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .background(Color.blue.opacity(0.14))
+                                        .clipShape(Capsule())
+                                }
+                                .buttonStyle(.plain)
                             }
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
+
+                    NavigationLink {
+                        PreferenceCategoriesView(viewModel: viewModel)
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: "rectangle.grid.2x2.fill")
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundStyle(.white)
+                                .frame(width: 30, height: 30)
+                                .background(Color.blue.opacity(0.78))
+                                .clipShape(Circle())
+
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Explorer les categories")
+                                    .font(.subheadline.weight(.semibold))
+                                    .foregroundStyle(.primary)
+                                Text("Voir les profils associes a chaque preference")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+
+                            Spacer(minLength: 0)
+
+                            Image(systemName: "chevron.right")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(14)
+                        .background(
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .fill(Color(.secondarySystemBackground))
+                        )
+                    }
+                    .buttonStyle(.plain)
                 }
                 .padding()
             } else {

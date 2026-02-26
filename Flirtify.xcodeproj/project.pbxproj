@@ -10,8 +10,8 @@
 		1068408F3829D7B47C10975D /* FlirtifyLiveActivityExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B44A9A5FC9A1D2431BD5F61B /* FlirtifyLiveActivityExtension.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		863BEDEF916492A203466FA0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B90D90EDF08F84DB1F567082 /* Foundation.framework */; };
 		96790DCE8D9E5000A5B7B86D /* LikesQuotaActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 332E4C2DE4EAC7FE5590DD1E /* LikesQuotaActivityAttributes.swift */; };
-		BC87029848C0412A52B21CD0 /* LikesQuotaLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7BEB1BDDF66209232CF80C7 /* LikesQuotaLiveActivity.swift */; };
-		E1E63BFF69323AAD9CBF2A11 /* FlirtifyLiveActivityBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35A2C100AFC50A935787722C /* FlirtifyLiveActivityBundle.swift */; };
+		BC87029848C0412A52B21CD0 /* FlirtifyLiveActivityExtension/LikesQuotaLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7BEB1BDDF66209232CF80C7 /* FlirtifyLiveActivityExtension/LikesQuotaLiveActivity.swift */; };
+		E1E63BFF69323AAD9CBF2A11 /* FlirtifyLiveActivityExtension/FlirtifyLiveActivityBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35A2C100AFC50A935787722C /* FlirtifyLiveActivityExtension/FlirtifyLiveActivityBundle.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,34 +54,28 @@
 
 /* Begin PBXFileReference section */
 		332E4C2DE4EAC7FE5590DD1E /* LikesQuotaActivityAttributes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LikesQuotaActivityAttributes.swift; path = Flirtify/LiveActivities/LikesQuotaActivityAttributes.swift; sourceTree = SOURCE_ROOT; };
-		35A2C100AFC50A935787722C /* FlirtifyLiveActivityBundle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FlirtifyLiveActivityExtension/FlirtifyLiveActivityBundle.swift; sourceTree = SOURCE_ROOT; };
+		35A2C100AFC50A935787722C /* FlirtifyLiveActivityExtension/FlirtifyLiveActivityBundle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FlirtifyLiveActivityExtension/FlirtifyLiveActivityBundle.swift; sourceTree = SOURCE_ROOT; };
 		B44A9A5FC9A1D2431BD5F61B /* FlirtifyLiveActivityExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FlirtifyLiveActivityExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B90D90EDF08F84DB1F567082 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		C5B0372C2F4F0C4700B081CC /* Flirtify.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Flirtify.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C5B0373B2F4F0C4900B081CC /* FlirtifyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FlirtifyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C5B037452F4F0C4900B081CC /* FlirtifyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FlirtifyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		D7BEB1BDDF66209232CF80C7 /* LikesQuotaLiveActivity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FlirtifyLiveActivityExtension/LikesQuotaLiveActivity.swift; sourceTree = SOURCE_ROOT; };
+		D7BEB1BDDF66209232CF80C7 /* FlirtifyLiveActivityExtension/LikesQuotaLiveActivity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FlirtifyLiveActivityExtension/LikesQuotaLiveActivity.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		C5B0372E2F4F0C4700B081CC /* Flirtify */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = Flirtify;
 			sourceTree = "<group>";
 		};
 		C5B0373E2F4F0C4900B081CC /* FlirtifyTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = FlirtifyTests;
 			sourceTree = "<group>";
 		};
 		C5B037482F4F0C4900B081CC /* FlirtifyUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = FlirtifyUITests;
 			sourceTree = "<group>";
 		};
@@ -131,8 +125,8 @@
 		41F8643F2161C22ACBFD0650 /* FlirtifyLiveActivityExtension */ = {
 			isa = PBXGroup;
 			children = (
-				35A2C100AFC50A935787722C /* FlirtifyLiveActivityBundle.swift */,
-				D7BEB1BDDF66209232CF80C7 /* LikesQuotaLiveActivity.swift */,
+				35A2C100AFC50A935787722C /* FlirtifyLiveActivityExtension/FlirtifyLiveActivityBundle.swift */,
+				D7BEB1BDDF66209232CF80C7 /* FlirtifyLiveActivityExtension/LikesQuotaLiveActivity.swift */,
 				332E4C2DE4EAC7FE5590DD1E /* LikesQuotaActivityAttributes.swift */,
 			);
 			name = FlirtifyLiveActivityExtension;
@@ -335,8 +329,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E1E63BFF69323AAD9CBF2A11 /* FlirtifyLiveActivityBundle.swift in Sources */,
-				BC87029848C0412A52B21CD0 /* LikesQuotaLiveActivity.swift in Sources */,
+				E1E63BFF69323AAD9CBF2A11 /* FlirtifyLiveActivityExtension/FlirtifyLiveActivityBundle.swift in Sources */,
+				BC87029848C0412A52B21CD0 /* FlirtifyLiveActivityExtension/LikesQuotaLiveActivity.swift in Sources */,
 				96790DCE8D9E5000A5B7B86D /* LikesQuotaActivityAttributes.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -389,12 +383,12 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
-					CODE_SIGN_STYLE = Automatic;
-					CURRENT_PROJECT_VERSION = 1;
-					DEVELOPMENT_TEAM = U57HP2WX56;
-					GENERATE_INFOPLIST_FILE = NO;
-					INFOPLIST_FILE = FlirtifyLiveActivityExtension/Info.plist;
-					IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = U57HP2WX56;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = FlirtifyLiveActivityExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -420,12 +414,12 @@
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
-					CODE_SIGN_STYLE = Automatic;
-					CURRENT_PROJECT_VERSION = 1;
-					DEVELOPMENT_TEAM = U57HP2WX56;
-					GENERATE_INFOPLIST_FILE = NO;
-					INFOPLIST_FILE = FlirtifyLiveActivityExtension/Info.plist;
-					IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = U57HP2WX56;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = FlirtifyLiveActivityExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -566,6 +560,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -597,25 +592,25 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-					IPHONEOS_DEPLOYMENT_TARGET = 26.2;
-					LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
-					MARKETING_VERSION = 1.0;
-					PRODUCT_BUNDLE_IDENTIFIER = IOS.Flirtify;
-					PRODUCT_NAME = "$(TARGET_NAME)";
-					REGISTER_APP_GROUPS = YES;
-					SDKROOT = iphoneos;
-					STRING_CATALOG_GENERATE_SYMBOLS = YES;
-					SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-					SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-					SWIFT_APPROACHABLE_CONCURRENCY = YES;
-					SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
-					SWIFT_EMIT_LOC_STRINGS = YES;
-					SWIFT_OBJC_BRIDGING_HEADER = "Flirtify/App/Flirtify-Bridging-Header.h";
-					SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-					SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-					SWIFT_VERSION = 5.0;
-					TARGETED_DEVICE_FAMILY = "1,2";
-				};
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = IOS.Flirtify;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Flirtify/App/Flirtify-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
 			name = Debug;
 		};
 		C5B037512F4F0C4900B081CC /* Release */ = {
@@ -623,6 +618,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -654,24 +650,24 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-					IPHONEOS_DEPLOYMENT_TARGET = 26.2;
-					LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
-					MARKETING_VERSION = 1.0;
-					PRODUCT_BUNDLE_IDENTIFIER = IOS.Flirtify;
-					PRODUCT_NAME = "$(TARGET_NAME)";
-					REGISTER_APP_GROUPS = YES;
-					SDKROOT = iphoneos;
-					STRING_CATALOG_GENERATE_SYMBOLS = YES;
-					SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-					SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-					SWIFT_APPROACHABLE_CONCURRENCY = YES;
-					SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
-					SWIFT_EMIT_LOC_STRINGS = YES;
-					SWIFT_OBJC_BRIDGING_HEADER = "Flirtify/App/Flirtify-Bridging-Header.h";
-					SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-					SWIFT_VERSION = 5.0;
-					TARGETED_DEVICE_FAMILY = "1,2";
-				};
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = IOS.Flirtify;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Flirtify/App/Flirtify-Bridging-Header.h";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
 			name = Release;
 		};
 		C5B037532F4F0C4900B081CC /* Debug */ = {
@@ -680,22 +676,22 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-					DEVELOPMENT_TEAM = U57HP2WX56;
-					GENERATE_INFOPLIST_FILE = YES;
-					IPHONEOS_DEPLOYMENT_TARGET = 26.2;
-					MARKETING_VERSION = 1.0;
-					PRODUCT_BUNDLE_IDENTIFIER = IOS.FlirtifyTests;
-					PRODUCT_NAME = "$(TARGET_NAME)";
-					SDKROOT = iphoneos;
-					STRING_CATALOG_GENERATE_SYMBOLS = NO;
-					SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-					SWIFT_APPROACHABLE_CONCURRENCY = YES;
-					SWIFT_EMIT_LOC_STRINGS = NO;
-					SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-					SWIFT_VERSION = 5.0;
-					TARGETED_DEVICE_FAMILY = "1,2";
-					TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Flirtify.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Flirtify";
-				};
+				DEVELOPMENT_TEAM = U57HP2WX56;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = IOS.FlirtifyTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Flirtify.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Flirtify";
+			};
 			name = Debug;
 		};
 		C5B037542F4F0C4900B081CC /* Release */ = {
@@ -704,22 +700,22 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-					DEVELOPMENT_TEAM = U57HP2WX56;
-					GENERATE_INFOPLIST_FILE = YES;
-					IPHONEOS_DEPLOYMENT_TARGET = 26.2;
-					MARKETING_VERSION = 1.0;
-					PRODUCT_BUNDLE_IDENTIFIER = IOS.FlirtifyTests;
-					PRODUCT_NAME = "$(TARGET_NAME)";
-					SDKROOT = iphoneos;
-					STRING_CATALOG_GENERATE_SYMBOLS = NO;
-					SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-					SWIFT_APPROACHABLE_CONCURRENCY = YES;
-					SWIFT_EMIT_LOC_STRINGS = NO;
-					SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-					SWIFT_VERSION = 5.0;
-					TARGETED_DEVICE_FAMILY = "1,2";
-					TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Flirtify.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Flirtify";
-				};
+				DEVELOPMENT_TEAM = U57HP2WX56;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = IOS.FlirtifyTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Flirtify.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Flirtify";
+			};
 			name = Release;
 		};
 		C5B037562F4F0C4900B081CC /* Debug */ = {
@@ -727,22 +723,22 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-					DEVELOPMENT_TEAM = U57HP2WX56;
-					GENERATE_INFOPLIST_FILE = YES;
-					IPHONEOS_DEPLOYMENT_TARGET = 26.2;
-					MARKETING_VERSION = 1.0;
-					PRODUCT_BUNDLE_IDENTIFIER = IOS.FlirtifyUITests;
-					PRODUCT_NAME = "$(TARGET_NAME)";
-					SDKROOT = iphoneos;
-					STRING_CATALOG_GENERATE_SYMBOLS = NO;
-					SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-					SWIFT_APPROACHABLE_CONCURRENCY = YES;
-					SWIFT_EMIT_LOC_STRINGS = NO;
-					SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-					SWIFT_VERSION = 5.0;
-					TARGETED_DEVICE_FAMILY = "1,2";
-					TEST_TARGET_NAME = Flirtify;
-				};
+				DEVELOPMENT_TEAM = U57HP2WX56;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = IOS.FlirtifyUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Flirtify;
+			};
 			name = Debug;
 		};
 		C5B037572F4F0C4900B081CC /* Release */ = {
@@ -750,22 +746,22 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-					DEVELOPMENT_TEAM = U57HP2WX56;
-					GENERATE_INFOPLIST_FILE = YES;
-					IPHONEOS_DEPLOYMENT_TARGET = 26.2;
-					MARKETING_VERSION = 1.0;
-					PRODUCT_BUNDLE_IDENTIFIER = IOS.FlirtifyUITests;
-					PRODUCT_NAME = "$(TARGET_NAME)";
-					SDKROOT = iphoneos;
-					STRING_CATALOG_GENERATE_SYMBOLS = NO;
-					SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-					SWIFT_APPROACHABLE_CONCURRENCY = YES;
-					SWIFT_EMIT_LOC_STRINGS = NO;
-					SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-					SWIFT_VERSION = 5.0;
-					TARGETED_DEVICE_FAMILY = "1,2";
-					TEST_TARGET_NAME = Flirtify;
-				};
+				DEVELOPMENT_TEAM = U57HP2WX56;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = IOS.FlirtifyUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Flirtify;
+			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */

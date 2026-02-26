@@ -1,6 +1,7 @@
 {
   "images" : [
     {
+      "filename" : "flirtify_logo_dark_1024 1.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -12,6 +13,7 @@
           "value" : "dark"
         }
       ],
+      "filename" : "flirtify_logo_light_1024.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"

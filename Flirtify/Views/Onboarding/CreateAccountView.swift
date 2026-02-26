@@ -37,7 +37,8 @@ struct CreateAccountView: View {
         _bio = State(initialValue: initialProfile?.bio ?? "")
         _selectedSex = State(initialValue: initialProfile?.sex ?? .male)
         _selectedOrientation = State(initialValue: initialProfile?.orientation ?? .hetero)
-        _selectedInterests = State(initialValue: Set(initialProfile?.interests ?? []))
+        let initialInterests = Array((initialProfile?.interests ?? []).prefix(InterestCatalog.maxSelectable))
+        _selectedInterests = State(initialValue: Set(initialInterests))
         _photoGalleryData = State(initialValue: Self.initialProfilePhotoGalleryData(initialProfile))
     }
 
@@ -71,7 +72,11 @@ struct CreateAccountView: View {
                                 bio: bio,
                                 sex: selectedSex,
                                 orientation: selectedOrientation,
-                                interests: InterestCatalog.orderedSelection(from: selectedInterests),
+                                interests: Array(
+                                    InterestCatalog
+                                        .orderedSelection(from: selectedInterests)
+                                        .prefix(InterestCatalog.maxSelectable)
+                                ),
                                 photoData: primaryPhotoData,
                                 photoGalleryData: photoGalleryData
                             )
@@ -194,13 +199,20 @@ struct CreateAccountView: View {
                 Text("Centres d'interet")
                     .font(.headline)
                 Spacer(minLength: 0)
-                Text("\(selectedInterests.count) selectionnes")
+                Text("\(selectedInterests.count)/\(InterestCatalog.maxSelectable) selectionnes")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(
+                        selectedInterests.count == InterestCatalog.maxSelectable ? Color.secondary : Color.orange
+                    )
             }
 
+            Text("Choisis exactement \(InterestCatalog.maxSelectable) centres d'interet.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
             InterestChipsPicker(
-                allInterests: InterestCatalog.all,
+                categories: InterestCatalog.categories,
+                maxSelectionCount: InterestCatalog.maxSelectable,
                 selectedInterests: $selectedInterests
             )
         }
@@ -264,7 +276,7 @@ struct CreateAccountView: View {
         !firstName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
             !ageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
             !city.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-            !selectedInterests.isEmpty
+            selectedInterests.count == InterestCatalog.maxSelectable
     }
 
     private var primaryPhotoData: Data? {

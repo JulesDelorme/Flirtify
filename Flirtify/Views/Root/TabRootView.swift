@@ -3,6 +3,7 @@ import SwiftUI
 struct TabRootView: View {
     private enum Tab: Hashable {
         case swipe
+        case preferences
         case matches
         case profile
     }
@@ -50,6 +51,14 @@ struct TabRootView: View {
             }
             .tag(Tab.swipe)
 
+            NavigationStack {
+                PreferenceCategoriesView(viewModel: profileViewModel)
+            }
+            .tabItem {
+                Label("Catégories", systemImage: "square.grid.2x2.fill")
+            }
+            .tag(Tab.preferences)
+
             MatchesView(viewModel: matchesViewModel) { match, otherUser in
                 ChatView(
                     viewModel: ChatViewModel(
@@ -85,6 +94,8 @@ struct TabRootView: View {
         switch tab {
         case .swipe:
             swipeViewModel.loadDeck()
+        case .preferences:
+            profileViewModel.loadProfile()
         case .matches:
             matchesViewModel.loadMatches()
         case .profile:
